@@ -9,6 +9,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +28,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
     public static final int LOCATION_UPDATE_MIN_TIME = 5000;
 
+    // UI
+    private Button mLoginButton;
+    private Button.OnClickListener mLoginButtonListen;
+
+    private ImageView mBatteryImageView;
+    private ImageView mLightImageView;
+    private ImageView mCaneImageView;
+    private ImageView mEmergencyImageView;
+    private ImageView mHistoryImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +48,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         getCurrentLocation();
+
+        mLoginButton = findViewById(R.id.login);
+        mLoginButtonListen = new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mLoginButton.setVisibility(View.GONE);
+                mBatteryImageView.setVisibility(View.VISIBLE);
+                mLightImageView.setVisibility(View.VISIBLE);
+                mCaneImageView.setVisibility(View.VISIBLE);
+                mEmergencyImageView.setVisibility(View.VISIBLE);
+                mHistoryImageView.setVisibility(View.VISIBLE);
+            }
+        };
+        mLoginButton.setOnClickListener(mLoginButtonListen);
+
+        mBatteryImageView = findViewById(R.id.battery_status);
+        mLightImageView = findViewById(R.id.light_status);
+        mCaneImageView = findViewById(R.id.cane_status);
+        mEmergencyImageView = findViewById(R.id.emergency_status);
+        mHistoryImageView = findViewById(R.id.history);
+
+        mBatteryImageView.setVisibility(View.GONE);
+        mLightImageView.setVisibility(View.GONE);
+        mCaneImageView.setVisibility(View.GONE);
+        mEmergencyImageView.setVisibility(View.GONE);
+        mHistoryImageView.setVisibility(View.GONE);
+
+        updateStatusIcon();
     }
 
 
@@ -142,5 +184,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title("Current Position"));
             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
         }
+    }
+
+    private void updateStatusIcon(){
+        mBatteryImageView.setImageResource(R.mipmap.battery_normal);
+        mLightImageView.setImageResource(R.mipmap.light_off);
+        mCaneImageView.setImageResource(R.mipmap.cane_normal);
+        mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
     }
 }
