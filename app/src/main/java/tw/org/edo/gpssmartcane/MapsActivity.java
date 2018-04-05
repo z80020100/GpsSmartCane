@@ -2,6 +2,7 @@ package tw.org.edo.gpssmartcane;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,6 +25,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mGoogleMap;
     private LocationManager mLocationManager;
+    private Context mContext = this;
 
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
     public static final int LOCATION_UPDATE_MIN_TIME = 5000;
@@ -60,6 +62,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mCaneImageView.setVisibility(View.VISIBLE);
                 mEmergencyImageView.setVisibility(View.VISIBLE);
                 mHistoryImageView.setVisibility(View.VISIBLE);
+
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                startActivity(intent);
             }
         };
         mLoginButton.setOnClickListener(mLoginButtonListen);
