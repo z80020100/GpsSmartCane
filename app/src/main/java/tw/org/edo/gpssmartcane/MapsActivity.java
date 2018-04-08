@@ -18,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -186,7 +187,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
-                    .title("Current Position"));
+                    .title("Current Position")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.little_man)));
             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
         }
     }
