@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +23,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
+import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    final private  String TAG = this.getClass().getSimpleName();
+
 
     private GoogleMap mGoogleMap;
     private LocationManager mLocationManager;
@@ -57,15 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                mLoginButton.setVisibility(View.GONE);
-                mBatteryImageView.setVisibility(View.VISIBLE);
-                mLightImageView.setVisibility(View.VISIBLE);
-                mCaneImageView.setVisibility(View.VISIBLE);
-                mEmergencyImageView.setVisibility(View.VISIBLE);
-                mHistoryImageView.setVisibility(View.VISIBLE);
-
                 Intent intent = new Intent(mContext, LoginActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, ACTIVITY_LOGIN);
             }
         };
         mLoginButton.setOnClickListener(mLoginButtonListen);
@@ -198,5 +198,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLightImageView.setImageResource(R.mipmap.light_off);
         mCaneImageView.setImageResource(R.mipmap.cane_normal);
         mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case ACTIVITY_LOGIN:
+                Log.i(TAG, "Back from ACTIVITY_LOGIN");
+                if(resultCode == RESULT_LOGIN_SUCCESS){
+                    String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
+                    Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
+
+                    mLoginButton.setVisibility(View.GONE);
+                    mBatteryImageView.setVisibility(View.VISIBLE);
+                    mLightImageView.setVisibility(View.VISIBLE);
+                    mCaneImageView.setVisibility(View.VISIBLE);
+                    mEmergencyImageView.setVisibility(View.VISIBLE);
+                    mHistoryImageView.setVisibility(View.VISIBLE);
+
+                    Utility.makeTextAndShow(mContext, "登入成功", 2);
+                }
+                else{
+                    Log.e(TAG, "Return from ACTIVITY_LOGIN: resultCode = " + resultCode);
+                }
+        }
     }
 }
