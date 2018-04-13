@@ -216,6 +216,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
 
+                    String[] splited_data = Utility.dataSplitter(result);
+                    for(int i = 0; i < splited_data.length; i++){
+                        Log.i(TAG, splited_data[i]);
+                    }
+
                     mLoginButton.setVisibility(View.GONE);
                     mBatteryImageView.setVisibility(View.VISIBLE);
                     mLightImageView.setVisibility(View.VISIBLE);

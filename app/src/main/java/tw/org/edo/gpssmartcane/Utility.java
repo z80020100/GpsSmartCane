@@ -33,4 +33,8 @@ public class Utility {
         }
         return longitude_dd;
     }
+
+    public static String[] dataSplitter(String data){
+        return data.split(",");
+    }
 }
