@@ -20,4 +20,13 @@ public class DataCurrentPosition {
         this.longitudeDMM = longitude_dmm;
         this.position_E_W = position_e_w;
     }
+
+    public String toString(){
+        return "uid = " + this.uid + ", " +
+            "caneName = " + this.caneName + ", " +
+            "latitudeDMM = " + this.latitudeDMM + ", " +
+            "position_N_S = " + this.position_N_S + ", " +
+            "longitudeDMM = " + this.longitudeDMM + ", " +
+            "position_E_W = " + this.position_E_W ;
+    }
 }

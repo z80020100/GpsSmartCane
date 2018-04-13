@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
@@ -34,6 +37,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mGoogleMap;
     private LocationManager mLocationManager;
     private Context mContext = this;
+
+    private List<DataCurrentPosition> mDataCurrentPositionList = new ArrayList<>();
 
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
     public static final int LOCATION_UPDATE_MIN_TIME = 5000;
@@ -110,8 +115,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onLocationChanged(Location location) {
             if (location != null) {
                 //Logger.d(String.format("%f, %f", location.getLatitude(), location.getLongitude()));
-                drawMarker(location);
-                mLocationManager.removeUpdates(mLocationListener);
+                //drawMarkerCurrent(location);
+                //mLocationManager.removeUpdates(mLocationListener);
             } else {
 
             }
@@ -183,18 +188,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         if (location != null)
-            drawMarker(location);
+            drawMarkerCurrent(location);
     }
 
-    private void drawMarker(Location location) {
+    private void drawMarkerCurrent(Location location) {
         if (mGoogleMap != null) {
             mGoogleMap.clear();
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
-                    .title("Current Position")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.little_man)));
+                    .title("Current Position"));
             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
+        }
+    }
+
+    private void drawMarkerCaneCurrent(String cane_name, double latitude_dd, double longitude_dd) {
+        if (mGoogleMap != null) {
+            mGoogleMap.clear();
+            LatLng gps = new LatLng(latitude_dd, longitude_dd);
+            mGoogleMap.addMarker(new MarkerOptions()
+                    .position(gps)
+                    .title(cane_name)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.little_man)));
+            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 16));
         }
     }
 
@@ -217,9 +233,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
 
                     String[] splited_data = Utility.dataSplitter(result);
-                    for(int i = 0; i < splited_data.length; i++){
-                        Log.i(TAG, splited_data[i]);
+                    Log.i(TAG, splited_data[0]);
+                    for(int i = 0; i < Integer.parseInt(splited_data[0]); i++){
+                        String uid = splited_data[i*6+1];
+                        String cane_name = splited_data[i*6+2];
+                        String latitude_dmm = splited_data[i*6+3];
+                        String position_n_s = splited_data[i*6+4];
+                        String longitude_dmm = splited_data[i*6+5];
+                        String position_e_w = splited_data[i*6+6];
+
+                        /*
+                        Log.i(TAG, uid);
+                        Log.i(TAG, cane_name);
+                        Log.i(TAG, latitude_dmm);
+                        Log.i(TAG, position_n_s);
+                        Log.i(TAG, longitude_dmm);
+                        Log.i(TAG, position_e_w);
+                        */
+
+                        mDataCurrentPositionList.add(
+                                new DataCurrentPosition(uid, cane_name, latitude_dmm,
+                                        position_n_s, longitude_dmm, position_e_w));
                     }
+
+                    for(int i = 0; i < mDataCurrentPositionList.size(); i++){
+                        Log.i(TAG, "" + mDataCurrentPositionList.get(i).toString());
+                    }
+
+                    DataCurrentPosition first_cane = mDataCurrentPositionList.get(0);
+                    String first_cane_name = first_cane.caneName;
+                    double first_latitude_dd = Utility.latitudeDMMtoDD(first_cane.latitudeDMM, first_cane.position_N_S);
+                    double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
+                    drawMarkerCaneCurrent(first_cane_name, first_latitude_dd, first_longitude_dd);
+
 
                     mLoginButton.setVisibility(View.GONE);
                     mBatteryImageView.setVisibility(View.VISIBLE);
