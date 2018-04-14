@@ -193,7 +193,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawMarkerCurrent(Location location) {
         if (mGoogleMap != null) {
-            mGoogleMap.clear();
+            //mGoogleMap.clear();
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
@@ -204,7 +204,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawMarkerCaneCurrent(String cane_name, double latitude_dd, double longitude_dd) {
         if (mGoogleMap != null) {
-            mGoogleMap.clear();
+            //mGoogleMap.clear();
             LatLng gps = new LatLng(latitude_dd, longitude_dd);
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
