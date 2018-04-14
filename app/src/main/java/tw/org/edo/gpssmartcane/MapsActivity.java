@@ -230,22 +230,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .radius(5) // In meters
                     .clickable(true);
             // Get back the mutable Circle
-            Circle circle = mGoogleMap.addCircle(circleOptions);
+            final Circle circle = mGoogleMap.addCircle(circleOptions);
+
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(gps)
+                    .alpha(0F)
+                    .title(cane_name);
+            final Marker melbourne = mGoogleMap.addMarker(markerOptions);
 
             mGoogleMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
                 @Override
                 public void onCircleClick(Circle circle) {
-                    // Flip the r, g and b components of the circle's
-                    // stroke color.
-                    int strokeColor = circle.getStrokeColor() ^ 0x00ffffff;
-                    circle.setStrokeColor(strokeColor);
-
-                    Marker melbourne = mGoogleMap.addMarker(new MarkerOptions()
-                            .position(gps)
-                            .alpha(0F)
-                            .title(cane_name)
-                            .snippet(""));
                     melbourne.showInfoWindow();
+                }
+            });
+
+            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    return false;
                 }
             });
 
