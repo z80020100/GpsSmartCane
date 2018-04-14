@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,7 +21,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -214,6 +218,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void drawMarkerCaneHistory(final String cane_name, double latitude_dd, double longitude_dd, boolean camera_move) {
+        if (mGoogleMap != null) {
+            //mGoogleMap.clear();
+            final LatLng gps = new LatLng(latitude_dd, longitude_dd);
+
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(gps)
+                    .strokeColor(Color.argb(255, 68, 114, 196))
+                    .fillColor(Color.argb(255, 68, 114, 196))
+                    .radius(5) // In meters
+                    .clickable(true);
+            // Get back the mutable Circle
+            Circle circle = mGoogleMap.addCircle(circleOptions);
+
+            mGoogleMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
+                @Override
+                public void onCircleClick(Circle circle) {
+                    // Flip the r, g and b components of the circle's
+                    // stroke color.
+                    int strokeColor = circle.getStrokeColor() ^ 0x00ffffff;
+                    circle.setStrokeColor(strokeColor);
+
+                    Marker melbourne = mGoogleMap.addMarker(new MarkerOptions()
+                            .position(gps)
+                            .alpha(0F)
+                            .title(cane_name)
+                            .snippet(""));
+                    melbourne.showInfoWindow();
+                }
+            });
+
+            if(camera_move){
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 21));
+            }
+        }
+    }
+
     private void updateStatusIcon(){
         mBatteryImageView.setImageResource(R.mipmap.battery_normal);
         mLightImageView.setImageResource(R.mipmap.light_off);
@@ -265,6 +306,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double first_latitude_dd = Utility.latitudeDMMtoDD(first_cane.latitudeDMM, first_cane.position_N_S);
                     double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
                     drawMarkerCaneCurrent(first_cane_name, first_latitude_dd, first_longitude_dd);
+                    drawMarkerCaneHistory(first_cane_name, first_latitude_dd, first_longitude_dd, true);
 
 
                     mLoginButton.setVisibility(View.GONE);
