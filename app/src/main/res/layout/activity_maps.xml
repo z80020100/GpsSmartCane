@@ -17,46 +17,140 @@
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/setting" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@mipmap/setting"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
             android:layout_weight="9"
+            android:background="#FFFFFF"
             android:gravity="center"
-            android:textSize="25dp"
             android:text="點此處登入"
-            android:background="#FFFFFF"/>
+            android:textSize="25dp"
+            map:layout_constraintBottom_toTopOf="@+id/start_date"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHorizontal_bias="0.0"
+            map:layout_constraintStart_toEndOf="@+id/setting"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="0.0" />
+
         <ImageView
             android:id="@+id/battery_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            map:layout_constraintStart_toStartOf="@+id/login"
+            map:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/light_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            map:layout_constraintStart_toEndOf="@+id/battery_status"
+            map:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/cane_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            map:layout_constraintStart_toEndOf="@+id/light_status"
+            map:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/emergency_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            map:layout_constraintStart_toEndOf="@+id/cane_status"
+            map:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/history"
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:src="@mipmap/history"
+            map:layout_constraintStart_toEndOf="@+id/emergency_status"
+            map:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/start_date"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:src="@mipmap/history" />
-    </LinearLayout>
+            android:background="@drawable/shape_rectangle"
+            android:text="起始日期"
+            android:textSize="30dp"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHorizontal_bias="0.15"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="0.84000003" />
+
+        <TextView
+            android:id="@+id/start_time"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle"
+            android:text="起始時間"
+            android:textSize="30dp"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHorizontal_bias="0.85"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="0.84000003" />
+
+        <TextView
+            android:id="@+id/end_date"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle"
+            android:text="結束日期"
+            android:textSize="30dp"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHorizontal_bias="0.15"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="0.96" />
+
+        <TextView
+            android:id="@+id/end_time"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle"
+            android:text="結束時間"
+            android:textSize="30dp"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHorizontal_bias="0.85"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="0.96" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </FrameLayout>

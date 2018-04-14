@@ -27,6 +27,6 @@ public class DataCurrentPosition {
             "latitudeDMM = " + this.latitudeDMM + ", " +
             "position_N_S = " + this.position_N_S + ", " +
             "longitudeDMM = " + this.longitudeDMM + ", " +
-            "position_E_W = " + this.position_E_W ;
+            "position_E_W = " + this.position_E_W;
     }
 }
