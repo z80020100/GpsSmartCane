@@ -9,6 +9,7 @@ public class Constant {
 
     public static final int RESULT_LOGIN_SUCCESS = 0;
     public static final int RESULT_LOGIN_FAIL = -1;
+    public static final String RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL = "0000000000000000000000000000<br>";
 
     public static final String RETURN_VALUE_LOGIN = "return_value_login";
 

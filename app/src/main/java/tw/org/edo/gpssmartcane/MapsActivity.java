@@ -1,6 +1,7 @@
 package tw.org.edo.gpssmartcane;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,7 +15,9 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,10 +31,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -57,10 +62,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageView mEmergencyImageView;
     private ImageView mHistoryImageView;
 
+    private TextView mStartDateTextView;
+    private TextView mStartTimeTextView;
+    private TextView mEndDateTextView;
+    private TextView mEndTimeTextView;
+
+    private String mStartDate;
+    private String mStartTime;
+    private String mEndDate;
+    private String mEndTime;
+
+    private View.OnClickListener mStartDateTextViewListener;
+
+    int mNowYear;
+    int mNowMounh;
+    int mNowDay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Calendar c = Calendar.getInstance();
+        mNowYear = c.get(Calendar.YEAR);
+        mNowMounh = c.get(Calendar.MONTH); // index is 0 ~ 11
+        mNowDay = c.get(Calendar.DAY_OF_MONTH);
 
         // Only for Test
         //Log.i(TAG, String.valueOf(Utility.latitudeDMMtoDD("4124.2028", "N"))); // 41.40338
@@ -97,6 +123,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mHistoryImageView.setVisibility(View.GONE);
 
         updateStatusIcon();
+
+        mStartDateTextView = findViewById(R.id.start_date);
+        mStartDateTextViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final TextView textView = (TextView) view;
+                Log.i(TAG, "onClick: mStartDateTextView");
+                Log.i(TAG, "Now Date: " + mNowYear + "/" + mNowMounh + "/" + mNowDay);
+                DatePickerDialog dpd = new DatePickerDialog(mContext,
+                        new DatePickerDialog.OnDateSetListener() {
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                mStartDate = year + "/" + (month+1) + "/" + dayOfMonth;
+                                textView.setText(mStartDate);
+                            }
+                        }, mNowYear, mNowMounh, mNowDay);
+                dpd.show();
+            }
+        };
+        mStartDateTextView.setOnClickListener(mStartDateTextViewListener);
     }
 
 
@@ -273,6 +318,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case ACTIVITY_LOGIN:
                 Log.i(TAG, "Back from ACTIVITY_LOGIN");
                 if(resultCode == RESULT_LOGIN_SUCCESS){
+                    Utility.makeTextAndShow(mContext, "登入成功", 2);
+
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
 
@@ -282,35 +329,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         String uid = splited_data[i*6+1];
                         String cane_name = splited_data[i*6+2];
                         String latitude_dmm = splited_data[i*6+3];
-                        String position_n_s = splited_data[i*6+4];
-                        String longitude_dmm = splited_data[i*6+5];
-                        String position_e_w = splited_data[i*6+6];
+                        if(latitude_dmm.equals(RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL)){
+                            Log.e(TAG, "No GPS signal");
+                            Utility.makeTextAndShow(mContext, "無GPS訊號", 2);
+                        }
+                        else{
+                            String position_n_s = splited_data[i*6+4];
+                            String longitude_dmm = splited_data[i*6+5];
+                            String position_e_w = splited_data[i*6+6];
 
-                        /*
-                        Log.i(TAG, uid);
-                        Log.i(TAG, cane_name);
-                        Log.i(TAG, latitude_dmm);
-                        Log.i(TAG, position_n_s);
-                        Log.i(TAG, longitude_dmm);
-                        Log.i(TAG, position_e_w);
-                        */
+                            /*
+                            Log.i(TAG, uid);
+                            Log.i(TAG, cane_name);
+                            Log.i(TAG, latitude_dmm);
+                            Log.i(TAG, position_n_s);
+                            Log.i(TAG, longitude_dmm);
+                            Log.i(TAG, position_e_w);
+                            */
 
-                        mDataCurrentPositionList.add(
-                                new DataCurrentPosition(uid, cane_name, latitude_dmm,
-                                        position_n_s, longitude_dmm, position_e_w));
+                            mDataCurrentPositionList.add(
+                                    new DataCurrentPosition(uid, cane_name, latitude_dmm,
+                                            position_n_s, longitude_dmm, position_e_w));
+                        }
                     }
 
                     for(int i = 0; i < mDataCurrentPositionList.size(); i++){
                         Log.i(TAG, "" + mDataCurrentPositionList.get(i).toString());
                     }
 
-                    DataCurrentPosition first_cane = mDataCurrentPositionList.get(0);
-                    String first_cane_name = first_cane.caneName;
-                    double first_latitude_dd = Utility.latitudeDMMtoDD(first_cane.latitudeDMM, first_cane.position_N_S);
-                    double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
-                    drawMarkerCaneCurrent(first_cane_name, first_latitude_dd, first_longitude_dd);
-                    drawMarkerCaneHistory(first_cane_name, first_latitude_dd, first_longitude_dd, true);
-
+                    if(mDataCurrentPositionList.size() > 0){
+                        DataCurrentPosition first_cane = mDataCurrentPositionList.get(0);
+                        String first_cane_name = first_cane.caneName;
+                        double first_latitude_dd = Utility.latitudeDMMtoDD(first_cane.latitudeDMM, first_cane.position_N_S);
+                        double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
+                        drawMarkerCaneCurrent(first_cane_name, first_latitude_dd, first_longitude_dd);
+                        drawMarkerCaneHistory(first_cane_name, first_latitude_dd, first_longitude_dd, true);
+                    }
 
                     mLoginButton.setVisibility(View.GONE);
                     mBatteryImageView.setVisibility(View.VISIBLE);
@@ -318,8 +372,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mCaneImageView.setVisibility(View.VISIBLE);
                     mEmergencyImageView.setVisibility(View.VISIBLE);
                     mHistoryImageView.setVisibility(View.VISIBLE);
-
-                    Utility.makeTextAndShow(mContext, "登入成功", 2);
                 }
                 else{
                     Log.e(TAG, "Return from ACTIVITY_LOGIN: resultCode = " + resultCode);

@@ -97,59 +97,63 @@
 
         <TextView
             android:id="@+id/start_date"
-            android:layout_width="140dp"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_rectangle"
+            android:gravity="center_horizontal"
             android:text="起始日期"
-            android:textSize="30dp"
+            android:textSize="25dp"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHorizontal_bias="0.15"
+            map:layout_constraintHorizontal_bias="0.1"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.84000003" />
+            map:layout_constraintVertical_bias="0.82" />
 
         <TextView
             android:id="@+id/start_time"
-            android:layout_width="140dp"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_rectangle"
+            android:gravity="center_horizontal"
             android:text="起始時間"
-            android:textSize="30dp"
+            android:textSize="25dp"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHorizontal_bias="0.85"
+            map:layout_constraintHorizontal_bias="0.9"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.84000003" />
+            map:layout_constraintVertical_bias="0.82" />
 
         <TextView
             android:id="@+id/end_date"
-            android:layout_width="140dp"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_rectangle"
+            android:gravity="center_horizontal"
             android:text="結束日期"
-            android:textSize="30dp"
+            android:textSize="25dp"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHorizontal_bias="0.15"
+            map:layout_constraintHorizontal_bias="0.1"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.96" />
+            map:layout_constraintVertical_bias="0.94" />
 
         <TextView
             android:id="@+id/end_time"
-            android:layout_width="140dp"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_rectangle"
+            android:gravity="center_horizontal"
             android:text="結束時間"
-            android:textSize="30dp"
+            android:textSize="25dp"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHorizontal_bias="0.85"
+            map:layout_constraintHorizontal_bias="0.9"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.96" />
+            map:layout_constraintVertical_bias="0.94" />
 
     </android.support.constraint.ConstraintLayout>
 
