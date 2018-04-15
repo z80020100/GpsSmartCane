@@ -324,19 +324,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
 
                     String[] splited_data = Utility.dataSplitter(result);
-                    Log.i(TAG, splited_data[0]);
-                    for(int i = 0; i < Integer.parseInt(splited_data[0]); i++){
-                        String uid = splited_data[i*6+1];
-                        String cane_name = splited_data[i*6+2];
-                        String latitude_dmm = splited_data[i*6+3];
+                    Log.i(TAG, "User ID: " + splited_data[0]);
+                    Log.i(TAG, "Cane Quantity: " + splited_data[1]);
+
+                    for(int i = 0; i < Integer.parseInt(splited_data[1]); i++){
+                        String uid = splited_data[i*6+2];
+                        String cane_name = splited_data[i*6+3];
+                        String latitude_dmm = splited_data[i*6+4];
                         if(latitude_dmm.equals(RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL)){
                             Log.e(TAG, "No GPS signal");
                             Utility.makeTextAndShow(mContext, "無GPS訊號", 2);
                         }
                         else{
-                            String position_n_s = splited_data[i*6+4];
-                            String longitude_dmm = splited_data[i*6+5];
-                            String position_e_w = splited_data[i*6+6];
+                            String position_n_s = splited_data[i*6+5];
+                            String longitude_dmm = splited_data[i*6+6];
+                            String position_e_w = splited_data[i*6+7];
 
                             /*
                             Log.i(TAG, uid);
