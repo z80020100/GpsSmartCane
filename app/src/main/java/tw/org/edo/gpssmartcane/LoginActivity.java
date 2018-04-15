@@ -2,8 +2,8 @@ package tw.org.edo.gpssmartcane;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import java.util.ArrayList;
 
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_EMAIL;
-import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_PASSWORDL;
+import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_PASSWORD;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
@@ -62,11 +62,11 @@ public class LoginActivity extends AppCompatActivity {
                             String url = URL_LOGIN;
                             ArrayList<NameValuePair> params = new ArrayList<>();
                             params.add(new BasicNameValuePair(NAME_LOGIN_EMAIL, mUserName));
-                            params.add(new BasicNameValuePair(NAME_LOGIN_PASSWORDL, mPassword));
+                            params.add(new BasicNameValuePair(NAME_LOGIN_PASSWORD, mPassword));
                             String return_data = DBConnector.executeQuery(params, url);
                             Log.i(TAG, "return_data = " + return_data);
                             mLoginResult = Character.getNumericValue(return_data.charAt(0));
-                            Log.i("TAG", "mLoginResult = " + mLoginResult);
+                            Log.i(TAG, "mLoginResult = " + mLoginResult);
 
                             if(mLoginResult != RESULT_LOGIN_FAIL){
                                 mLoginResult = RESULT_LOGIN_SUCCESS;

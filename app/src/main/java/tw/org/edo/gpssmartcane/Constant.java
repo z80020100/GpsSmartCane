@@ -16,5 +16,5 @@ public class Constant {
     public static final String URL_LOGIN = "http://edo.org.tw/cane/gmap.asp";
 
     public static final String NAME_LOGIN_EMAIL = "email";
-    public static final String NAME_LOGIN_PASSWORDL = "pwd";
+    public static final String NAME_LOGIN_PASSWORD = "pwd";
 }
