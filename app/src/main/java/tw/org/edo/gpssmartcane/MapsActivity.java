@@ -30,14 +30,22 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
+import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_CANE_UID;
+import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_END_RANGE;
+import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_START_RANGE;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_SEARCH_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
+import static tw.org.edo.gpssmartcane.Constant.URL_SEARCH_HISTORY;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     final private  String TAG = this.getClass().getSimpleName();
@@ -48,6 +56,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Context mContext = this;
 
     private List<DataCurrentPosition> mDataCurrentPositionList = new ArrayList<>();
+    private List<DataHistoryPosition> mDataHistoryPositionList = new ArrayList<>();
+    private List<MarkerOptions> mHistiryMarkerOptions = new ArrayList<>();
 
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
     public static final int LOCATION_UPDATE_MIN_TIME = 5000;
@@ -361,8 +371,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(gps)
-                    .alpha(0F)
+                    //.alpha(0F)
                     .title(cane_name);
+            mHistiryMarkerOptions.add(markerOptions);
             final Marker melbourne = mGoogleMap.addMarker(markerOptions);
 
             mGoogleMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
@@ -380,7 +391,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
 
             if(camera_move){
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 21));
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 18));
             }
         }
     }
@@ -421,7 +432,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             String position_n_s = splited_data[i*6+5];
                             String longitude_dmm = splited_data[i*6+6];
                             String position_e_w = splited_data[i*6+7];
-
                             /*
                             Log.i(TAG, uid);
                             Log.i(TAG, cane_name);
@@ -465,6 +475,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawHistory(){
         if((mStartDate != null) && (mStartTime != null) && (mEndDate != null) && (mEndTime != null)){
+            mHistiryMarkerOptions.clear();
+            mDataHistoryPositionList.clear();
+            mGoogleMap.clear();
+
             Utility.makeTextAndShow(mContext, "開始搜尋...", 2);
 
             //mStartDate = mStartTime = mEndDate = mEndTime = null;
@@ -472,6 +486,81 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //mStartTimeTextView.setText("起始時間");
             //mEndDateTextView.setText("結束日期");
             //mEndTimeTextView.setText("結束時間");
+
+            Runnable searchHistoryRunnable;
+            Thread searchHistoryThread;
+            searchHistoryRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    String url = URL_SEARCH_HISTORY;
+                    String caneUid = "A001";
+                    String startRange = mStartDate + " " + mStartTime;
+                    String endRange = mEndDate + " " + mEndTime;
+                    Log.i(TAG, "Query String: "+ startRange + "; " + endRange);
+                    ArrayList<NameValuePair> params = new ArrayList<>();
+                    params.add(new BasicNameValuePair(NAME_SEARCH_HISTORY_CANE_UID, caneUid));
+                    params.add(new BasicNameValuePair(NAME_SEARCH_HISTORY_START_RANGE, startRange));
+                    params.add(new BasicNameValuePair(NAME_SEARCH_HISTORY_END_RANGE, endRange));
+                    String returnData = DBConnector.executeQuery(params, url);
+                    int searchResult = Character.getNumericValue(returnData.charAt(0));
+                    if(searchResult != RESULT_SEARCH_FAIL){
+                        String[] splitData = Utility.dataSplitter(returnData);
+                        int offset = 0;
+                        if(!splitData[0].equals("0<br>")){
+                            int historyQuantity = Integer.valueOf(splitData[0]);
+                            Log.i(TAG, "Quantity of History: " + historyQuantity);
+                            for(int i = 0; i <  historyQuantity; i++){
+                                if(splitData[i*5+1+offset].equals(RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL)){
+                                    offset -= 3;
+                                    continue;
+                                }
+                                DataHistoryPosition dhp = new DataHistoryPosition(splitData[i*5+1+offset], splitData[i*5+2+offset],
+                                        splitData[i*5+3+offset], splitData[i*5+4+offset], splitData[i*5+5+offset]);
+                                mDataHistoryPositionList.add(dhp);
+                                //Log.i(TAG, "Data: " + dhp.toString());
+                            }
+
+                            for(int i = 0; i < mDataHistoryPositionList.size(); i++){
+                                DataHistoryPosition position = mDataHistoryPositionList.get(i);
+                                final double position_latitude_dd = Utility.latitudeDMMtoDD(position.latitudeDMM, position.position_N_S);
+                                final double position_longitude_dd = Utility.longitudeDMMtoDD(position.longitudeDMM, position.position_E_W);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        drawMarkerCaneHistory("A001", position_latitude_dd, position_longitude_dd, false);
+                                    }
+                                });
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MarkerOptions lastMarkOption = mHistiryMarkerOptions.get(mHistiryMarkerOptions.size()-1);
+                                    LatLng lastPosition = lastMarkOption.getPosition();
+                                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, 18));
+                                }
+                            });
+                        }
+                        else{
+
+                        }
+                    }
+                    else{
+
+                    }
+                }
+            };
+            searchHistoryThread = new Thread(searchHistoryRunnable);
+            searchHistoryThread.start();
+
+            /*
+            try {
+                searchHistoryThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            */
+
         }
         else{
             Log.i(TAG, "Search condition not ready");
