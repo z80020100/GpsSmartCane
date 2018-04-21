@@ -535,9 +535,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MarkerOptions lastMarkOption = mHistiryMarkerOptions.get(mHistiryMarkerOptions.size()-1);
-                                    LatLng lastPosition = lastMarkOption.getPosition();
-                                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, 18));
+                                    if(mHistiryMarkerOptions.size() > 0){
+                                        MarkerOptions lastMarkOption = mHistiryMarkerOptions.get(mHistiryMarkerOptions.size()-1);
+                                        LatLng lastPosition = lastMarkOption.getPosition();
+                                        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastPosition, 18));
+                                    }
                                 }
                             });
                         }
