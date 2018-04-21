@@ -72,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageView mEmergencyImageView;
     private ImageView mHistoryImageView;
 
+    private boolean mSearchVisiable = false;
     private TextView mStartDateTextView;
     private TextView mStartTimeTextView;
     private TextView mEndDateTextView;
@@ -86,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View.OnClickListener mStartTimeTextViewListener;
     private View.OnClickListener mEndDateTextViewListener;
     private View.OnClickListener mEndTimeTextViewListener;
+    private View.OnClickListener mHistoryImageViewListener;
 
     int mNowYear;
     int mNowMounh;
@@ -138,6 +140,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mCaneImageView.setVisibility(View.GONE);
         mEmergencyImageView.setVisibility(View.GONE);
         mHistoryImageView.setVisibility(View.GONE);
+
+        mHistoryImageViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!mSearchVisiable){
+                    mSearchVisiable = true;
+                    mStartDateTextView.setVisibility(View.VISIBLE);
+                    mStartTimeTextView.setVisibility(View.VISIBLE);
+                    mEndDateTextView.setVisibility(View.VISIBLE);
+                    mEndTimeTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    mSearchVisiable = false;
+                    mStartDateTextView.setVisibility(View.GONE);
+                    mStartTimeTextView.setVisibility(View.GONE);
+                    mEndDateTextView.setVisibility(View.GONE);
+                    mEndTimeTextView.setVisibility(View.GONE);
+                }
+            }
+        };
+        mHistoryImageView.setOnClickListener(mHistoryImageViewListener);
 
         updateStatusIcon();
 
@@ -234,6 +257,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         mEndTimeTextView.setOnClickListener(mEndTimeTextViewListener);
+
+        mStartDateTextView.setVisibility(View.GONE);
+        mStartTimeTextView.setVisibility(View.GONE);
+        mEndDateTextView.setVisibility(View.GONE);
+        mEndTimeTextView.setVisibility(View.GONE);
     }
 
 
@@ -371,7 +399,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(gps)
-                    //.alpha(0F)
+                    .alpha(0F)
                     .title(cane_name);
             mHistiryMarkerOptions.add(markerOptions);
             final Marker melbourne = mGoogleMap.addMarker(markerOptions);
