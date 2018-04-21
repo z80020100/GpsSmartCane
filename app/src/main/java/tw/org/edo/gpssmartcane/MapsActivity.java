@@ -1,7 +1,6 @@
 package tw.org.edo.gpssmartcane;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +27,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,10 +73,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String mEndTime;
 
     private View.OnClickListener mStartDateTextViewListener;
+    private View.OnClickListener mStartTimeTextViewListener;
+    private View.OnClickListener mEndDateTextViewListener;
+    private View.OnClickListener mEndTimeTextViewListener;
 
     int mNowYear;
     int mNowMounh;
     int mNowDay;
+    int mNowHour;
+    int mMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +92,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mNowYear = c.get(Calendar.YEAR);
         mNowMounh = c.get(Calendar.MONTH); // index is 0 ~ 11
         mNowDay = c.get(Calendar.DAY_OF_MONTH);
+        mNowHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
 
         // Only for Test
         //Log.i(TAG, String.valueOf(Utility.latitudeDMMtoDD("4124.2028", "N"))); // 41.40338
@@ -131,17 +138,92 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final TextView textView = (TextView) view;
                 Log.i(TAG, "onClick: mStartDateTextView");
                 Log.i(TAG, "Now Date: " + mNowYear + "/" + mNowMounh + "/" + mNowDay);
-                DatePickerDialog dpd = new DatePickerDialog(mContext,
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
                         new DatePickerDialog.OnDateSetListener() {
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                mStartDate = year + "/" + (month+1) + "/" + dayOfMonth;
+                            @Override
+                            public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+                                mStartDate = year + "/" + (monthOfYear+1) + "/" + dayOfMonth;
                                 textView.setText(mStartDate);
+                                drawHistory();
                             }
                         }, mNowYear, mNowMounh, mNowDay);
-                dpd.show();
+                dpd.setTitle("Select Start Date");
+                dpd.show(getFragmentManager(), "DatePickerDialog");
             }
         };
         mStartDateTextView.setOnClickListener(mStartDateTextViewListener);
+
+        mStartTimeTextView = findViewById(R.id.start_time);
+        mStartTimeTextViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final TextView textView = (TextView) view;
+                Log.i(TAG, "onClick: mStartTimeTextView");
+                Log.i(TAG, "Now Time: " + mNowHour + ":" + mMinute);
+                boolean is24HourView = false;
+                TimePickerDialog tpd = TimePickerDialog.newInstance(
+                        new TimePickerDialog.OnTimeSetListener(){
+                            @Override
+                            public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+                                mStartTime = hourOfDay + ":" + minute + ":" + second;
+                                textView.setText(mStartTime);
+                                drawHistory();
+                            }
+                        }, mNowHour, 0, is24HourView);
+                tpd.setTitle("Select Start Time");
+                tpd.enableMinutes(false);
+                tpd.enableSeconds(false);
+                tpd.show(getFragmentManager(), "TimePickerDialog");
+            }
+        };
+        mStartTimeTextView.setOnClickListener(mStartTimeTextViewListener);
+
+        mEndDateTextView = findViewById(R.id.end_date);
+        mEndDateTextViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final TextView textView = (TextView) view;
+                Log.i(TAG, "onClick: mEndDateTextView");
+                Log.i(TAG, "Now Date: " + mNowYear + "/" + mNowMounh + "/" + mNowDay);
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+                                mEndDate = year + "/" + (monthOfYear+1) + "/" + dayOfMonth;
+                                textView.setText(mEndDate);
+                                drawHistory();
+                            }
+                        }, mNowYear, mNowMounh, mNowDay);
+                dpd.setTitle("Select End Date");
+                dpd.show(getFragmentManager(), "DatePickerDialog");
+            }
+        };
+        mEndDateTextView.setOnClickListener(mEndDateTextViewListener);
+
+        mEndTimeTextView = findViewById(R.id.end_time);
+        mEndTimeTextViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final TextView textView = (TextView) view;
+                Log.i(TAG, "onClick: mEndTimeTextView");
+                Log.i(TAG, "Now Time: " + mNowHour + ":" + mMinute);
+                boolean is24HourView = false;
+                TimePickerDialog tpd = TimePickerDialog.newInstance(
+                        new TimePickerDialog.OnTimeSetListener(){
+                            @Override
+                            public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+                                mEndTime = hourOfDay + ":" + minute + ":" + second;
+                                textView.setText(mEndTime);
+                                drawHistory();
+                            }
+                        }, mNowHour, 0, is24HourView);
+                tpd.setTitle("Select Start Time");
+                tpd.enableMinutes(false);
+                tpd.enableSeconds(false);
+                tpd.show(getFragmentManager(), "TimePickerDialog");
+            }
+        };
+        mEndTimeTextView.setOnClickListener(mEndTimeTextViewListener);
     }
 
 
@@ -378,6 +460,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else{
                     Log.e(TAG, "Return from ACTIVITY_LOGIN: resultCode = " + resultCode);
                 }
+        }
+    }
+
+    private void drawHistory(){
+        if((mStartDate != null) && (mStartTime != null) && (mEndDate != null) && (mEndTime != null)){
+            Utility.makeTextAndShow(mContext, "開始搜尋...", 2);
+
+            //mStartDate = mStartTime = mEndDate = mEndTime = null;
+            //mStartDateTextView.setText("起始日期");
+            //mStartTimeTextView.setText("起始時間");
+            //mEndDateTextView.setText("結束日期");
+            //mEndTimeTextView.setText("結束時間");
+        }
+        else{
+            Log.i(TAG, "Search condition not ready");
         }
     }
 }
