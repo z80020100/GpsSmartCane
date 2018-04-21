@@ -544,11 +544,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             });
                         }
                         else{
-
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Utility.makeTextAndShow(mContext, "此段時間無歷史資料", 2);
+                                }
+                            });
                         }
                     }
                     else{
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utility.makeTextAndShow(mContext, "查詢失敗", 2);
+                            }
+                        });
                     }
                 }
             };
