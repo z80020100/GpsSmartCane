@@ -3,6 +3,7 @@ package tw.org.edo.gpssmartcane;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -38,6 +39,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
+import static tw.org.edo.gpssmartcane.Constant.COOKIE_ASP_SESSION_ID_NAME;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_END_RANGE;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_START_RANGE;
@@ -45,6 +47,10 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SEARCH_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_EMAIL;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_PASSWORD;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FILE_NAME;
 import static tw.org.edo.gpssmartcane.Constant.URL_SEARCH_HISTORY;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -54,6 +60,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mGoogleMap;
     private LocationManager mLocationManager;
     private Context mContext = this;
+    private SharedPreferences mSettings;
+    private SharedPreferences.Editor mEditor;
+
+    private String mSessionId;
+    private String mEmail;
+    private String mPassword;
 
     private List<DataCurrentPosition> mDataCurrentPositionList = new ArrayList<>();
     private List<DataHistoryPosition> mDataHistoryPositionList = new ArrayList<>();
@@ -100,6 +112,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        mSettings = getSharedPreferences(SHAREPREFERENCES_FILE_NAME,MODE_PRIVATE);
+        mEditor = mSettings.edit();
+
         Calendar c = Calendar.getInstance();
         mNowYear = c.get(Calendar.YEAR);
         mNowMounh = c.get(Calendar.MONTH); // index is 0 ~ 11
@@ -134,12 +149,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mCaneImageView = findViewById(R.id.cane_status);
         mEmergencyImageView = findViewById(R.id.emergency_status);
         mHistoryImageView = findViewById(R.id.history);
-
-        mBatteryImageView.setVisibility(View.GONE);
-        mLightImageView.setVisibility(View.GONE);
-        mCaneImageView.setVisibility(View.GONE);
-        mEmergencyImageView.setVisibility(View.GONE);
-        mHistoryImageView.setVisibility(View.GONE);
 
         mHistoryImageViewListener = new View.OnClickListener() {
             @Override
@@ -257,6 +266,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         mEndTimeTextView.setOnClickListener(mEndTimeTextViewListener);
+
+        mSessionId = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, "");
+        mEmail = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_EMAIL, "");
+        mPassword = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_PASSWORD, "");
+
+        if(mSessionId.equals("") || mEmail.equals("") || mPassword.equals("")){
+            Log.e(TAG, "No login information!");
+            mBatteryImageView.setVisibility(View.GONE);
+            mLightImageView.setVisibility(View.GONE);
+            mCaneImageView.setVisibility(View.GONE);
+            mEmergencyImageView.setVisibility(View.GONE);
+            mHistoryImageView.setVisibility(View.GONE);
+        }
+        else{
+            Utility.makeTextAndShow(mContext, "自動登入中...", 2);
+            Log.i(TAG, "Detect login information");
+            Log.i(TAG, "Session ID: " + mSessionId);
+            Log.i(TAG, "Email: " + mEmail);
+            Log.i(TAG, "PWD: " + mPassword);
+
+            mLoginButton.setVisibility(View.GONE);
+            mBatteryImageView.setVisibility(View.VISIBLE);
+            mLightImageView.setVisibility(View.VISIBLE);
+            mCaneImageView.setVisibility(View.VISIBLE);
+            mEmergencyImageView.setVisibility(View.VISIBLE);
+            mHistoryImageView.setVisibility(View.VISIBLE);
+        }
 
         mStartDateTextView.setVisibility(View.GONE);
         mStartTimeTextView.setVisibility(View.GONE);
@@ -443,6 +479,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
+                    String sessionId = data.getExtras().getString(COOKIE_ASP_SESSION_ID_NAME);
+                    Log.i(TAG, "Return from ACTIVITY_LOGIN: Session ID = " + sessionId);
+                    mEditor.putString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, sessionId);
+                    mEditor.commit();
 
                     String[] splited_data = Utility.dataSplitter(result);
                     Log.i(TAG, "User ID: " + splited_data[0]);

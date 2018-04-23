@@ -22,4 +22,11 @@ public class Constant {
     public static final String NAME_SEARCH_HISTORY_CANE_UID = "a";
     public static final String NAME_SEARCH_HISTORY_START_RANGE = "b";
     public static final String NAME_SEARCH_HISTORY_END_RANGE = "c";
+
+    public static final String COOKIE_ASP_SESSION_ID_NAME = "ASPSESSIONIDACSTBABS";
+
+    public static final String SHAREPREFERENCES_FILE_NAME = "data";
+    public static final String SHAREPREFERENCES_FIELD_LOGIN_EMAIL = "email";
+    public static final String SHAREPREFERENCES_FIELD_LOGIN_PASSWORD = "pwd";
+    public static final String SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID = "session_id";
 }

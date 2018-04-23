@@ -5,9 +5,10 @@ import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
@@ -16,6 +17,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
+
+import static tw.org.edo.gpssmartcane.Constant.COOKIE_ASP_SESSION_ID_NAME;
 
 /**
  * Created by Jerry on 2018/1/29.
@@ -23,14 +27,23 @@ import java.util.ArrayList;
 
 public class DBConnector {
     final private static String TAG = "DBConnector";
+    private static String mSessionId;
 
-    public static String executeQuery(ArrayList<NameValuePair> params, String uri) {
+    public static String executeQuery(ArrayList<NameValuePair> params, String uri, String sessionId) {
         //Log.i(TAG, "executeQuery start");
         String result;
 
-        HttpClient httpClient = new DefaultHttpClient();
+        DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(uri);
-
+        CookieStore cookieStore = null;
+        if(sessionId != null){
+            String cookie_session_id = COOKIE_ASP_SESSION_ID_NAME + "=" + sessionId;
+            Log.i(TAG, "Set session ID to cookie: " + cookie_session_id);
+            httpPost.setHeader("Cookie", cookie_session_id);
+        }
+        else{
+            Log.w(TAG, "No set session ID");
+        }
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -41,6 +54,15 @@ public class DBConnector {
             httpResponse = httpClient.execute(httpPost);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        cookieStore = httpClient.getCookieStore();
+        List<Cookie> cookies = cookieStore.getCookies();
+
+        for(int i = 0;i < cookies.size(); i++){
+            if(COOKIE_ASP_SESSION_ID_NAME.equals(cookies.get(i).getName())){
+                Log.i(TAG, COOKIE_ASP_SESSION_ID_NAME + ": " + cookies.get(i).getValue());
+                mSessionId = cookies.get(i).getValue();
+            }
         }
 
         HttpEntity httpEntity = httpResponse.getEntity();
@@ -76,5 +98,13 @@ public class DBConnector {
         //Log.i(TAG, "executeQuery end");
         Log.e(TAG, "return: "  + result);
         return result;
+    }
+
+    public static String executeQuery(ArrayList<NameValuePair> params, String uri) {
+        return executeQuery(params, uri, null);
+    }
+
+    public static String getSessionId(){
+        return mSessionId;
     }
 }
