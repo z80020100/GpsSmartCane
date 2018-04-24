@@ -52,8 +52,8 @@ public class SettingManager {
 
         Log.i(TAG, "Email: " + sEmaill);
         Log.i(TAG, "PWD: " + sPassword);
-        Log.i(TAG, "Session ID: " + sSessionId);
         Log.i(TAG, "Session ID Field Name: " + sSessionIdFieldName);
+        Log.i(TAG, "Session ID: " + sSessionId);
         Log.i(TAG, "User ID: " + sUserId);
         Log.i(TAG, "Cane UID: " + sCaneId);
     }
