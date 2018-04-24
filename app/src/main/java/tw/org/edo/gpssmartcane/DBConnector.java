@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static tw.org.edo.gpssmartcane.Constant.COOKIE_ASP_SESSION_ID_NAME;
+import static tw.org.edo.gpssmartcane.Constant.COOKIE_ASP_SESSION_ID_NAME_PREFIX;
 
 /**
  * Created by Jerry on 2018/1/29.
@@ -27,17 +27,18 @@ import static tw.org.edo.gpssmartcane.Constant.COOKIE_ASP_SESSION_ID_NAME;
 
 public class DBConnector {
     final private static String TAG = "DBConnector";
-    private static String mSessionId;
+    private static String sAspSessionIdValue;
+    private static String sAspSessionIdFieldName;
 
-    public static String executeQuery(ArrayList<NameValuePair> params, String uri, String sessionId) {
+    public static String executeQuery(ArrayList<NameValuePair> params, String uri, String sessionIdFieldName, String sessionIdValue) {
         //Log.i(TAG, "executeQuery start");
         String result;
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(uri);
         CookieStore cookieStore = null;
-        if(sessionId != null){
-            String cookie_session_id = COOKIE_ASP_SESSION_ID_NAME + "=" + sessionId;
+        if(sessionIdFieldName != null && sessionIdValue != null){
+            String cookie_session_id = sessionIdFieldName + "=" + sessionIdValue;
             Log.i(TAG, "Set session ID to cookie: " + cookie_session_id);
             httpPost.setHeader("Cookie", cookie_session_id);
         }
@@ -59,9 +60,13 @@ public class DBConnector {
         List<Cookie> cookies = cookieStore.getCookies();
 
         for(int i = 0;i < cookies.size(); i++){
-            if(COOKIE_ASP_SESSION_ID_NAME.equals(cookies.get(i).getName())){
-                Log.i(TAG, COOKIE_ASP_SESSION_ID_NAME + ": " + cookies.get(i).getValue());
-                mSessionId = cookies.get(i).getValue();
+            if(cookies.get(i).getName().contains(COOKIE_ASP_SESSION_ID_NAME_PREFIX)){
+                Log.i(TAG, cookies.get(i).getName() + ": " + cookies.get(i).getValue());
+                sAspSessionIdFieldName = cookies.get(i).getName();
+                sAspSessionIdValue = cookies.get(i).getValue();
+            }
+            else{
+                Log.i(TAG, "Others -> " + cookies.get(i).getName() + ": " + cookies.get(i).getValue());
             }
         }
 
@@ -101,10 +106,14 @@ public class DBConnector {
     }
 
     public static String executeQuery(ArrayList<NameValuePair> params, String uri) {
-        return executeQuery(params, uri, null);
+        return executeQuery(params, uri, null, null);
     }
 
-    public static String getSessionId(){
-        return mSessionId;
+    public static String getSessionIdValue(){
+        return sAspSessionIdValue;
+    }
+
+    public static String getsAspSessionIdFieldName(){
+        return sAspSessionIdFieldName;
     }
 }

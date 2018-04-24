@@ -2,7 +2,6 @@ package tw.org.edo.gpssmartcane;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +15,6 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 
-import static tw.org.edo.gpssmartcane.Constant.COOKIE_ASP_SESSION_ID_NAME;
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_EMAIL;
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_PASSWORD;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_FAIL;
@@ -24,7 +22,8 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_EMAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_PASSWORD;
-import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FILE_NAME;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME;
 import static tw.org.edo.gpssmartcane.Constant.URL_LOGIN;
 
 public class LoginActivity extends AppCompatActivity {
@@ -45,8 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private String mReturnData;
     private Intent mIntent = new Intent();
 
-    private SharedPreferences mSettings;
-    private SharedPreferences.Editor mEditor;
+    private SettingManager mSettingManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +78,13 @@ public class LoginActivity extends AppCompatActivity {
                                 mLoginResult = RESULT_LOGIN_SUCCESS;
                                 mReturnData = return_data;
                                 mIntent.putExtra(RETURN_VALUE_LOGIN, mReturnData);
-                                mIntent.putExtra(COOKIE_ASP_SESSION_ID_NAME, DBConnector.getSessionId());
                                 setResult(mLoginResult, mIntent);
-                                //Log.i(TAG, "Session ID = " + DBConnector.getSessionId());
-                                mEditor.putString(SHAREPREFERENCES_FIELD_LOGIN_EMAIL, mUserNameEditText.getText().toString());
-                                mEditor.putString(SHAREPREFERENCES_FIELD_LOGIN_PASSWORD, mPasswordEditText.getText().toString());
-                                mEditor.commit();
+                                Log.i(TAG, "Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
+                                Log.i(TAG, "Session ID = " + DBConnector.getSessionIdValue());
+                                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME, DBConnector.getsAspSessionIdFieldName());
+                                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, DBConnector.getSessionIdValue());
+                                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_EMAIL, mUserName);
+                                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_PASSWORD, mPassword);
                                 finish();
                             }
                             else{
@@ -125,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
         mSignUpTextView.setOnClickListener(listener);
         mLoginButton.setOnClickListener(mLoginButtonListen);
 
-        mSettings = getSharedPreferences(SHAREPREFERENCES_FILE_NAME,MODE_PRIVATE);
-        mEditor = mSettings.edit();
+        mSettingManager = new SettingManager(mContext);
     }
 }
