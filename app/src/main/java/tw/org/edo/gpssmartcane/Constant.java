@@ -6,6 +6,7 @@ package tw.org.edo.gpssmartcane;
 
 public class Constant {
     public static final int ACTIVITY_LOGIN = 0;
+    public static final int ACTIVITY_SETTING = 1;
 
     public static final int RESULT_LOGIN_SUCCESS = 0;
     public static final int RESULT_LOGIN_FAIL = -1;

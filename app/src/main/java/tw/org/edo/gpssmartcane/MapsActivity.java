@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
+import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_SETTING;
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_EMAIL;
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_PASSWORD;
 import static tw.org.edo.gpssmartcane.Constant.NAME_QUERY_STATUS_USER_ID;
@@ -83,6 +84,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageView mEmergencyImageView;
     private ImageView mHistoryImageView;
 
+    private ImageView mSettingImageView;
+
     private boolean mSearchVisiable = false;
     private TextView mStartDateTextView;
     private TextView mStartTimeTextView;
@@ -99,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View.OnClickListener mEndDateTextViewListener;
     private View.OnClickListener mEndTimeTextViewListener;
     private View.OnClickListener mHistoryImageViewListener;
+    private View.OnClickListener mSettingImageViewListener;
 
     int mNowYear;
     int mNowMounh;
@@ -154,6 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mCaneImageView = findViewById(R.id.cane_status);
         mEmergencyImageView = findViewById(R.id.emergency_status);
         mHistoryImageView = findViewById(R.id.history);
+        mSettingImageView = findViewById(R.id.setting);
 
         mHistoryImageViewListener = new View.OnClickListener() {
             @Override
@@ -175,6 +180,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         mHistoryImageView.setOnClickListener(mHistoryImageViewListener);
+
+        mSettingImageViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, CaneSettingActivity.class);
+                startActivityForResult(intent, ACTIVITY_SETTING);
+            }
+        };
+        mSettingImageView.setOnClickListener(mSettingImageViewListener);
 
         updateStatusIcon();
 
