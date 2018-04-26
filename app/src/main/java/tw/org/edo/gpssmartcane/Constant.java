@@ -37,6 +37,9 @@ public class Constant {
     public static final String SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME = "session_id_field_name";
     public static final String SHAREPREFERENCES_FIELD_USER_ID = "user_id";
     public static final String SHAREPREFERENCES_FIELD_CANE_UID = "cane_uid";
+    public static final String SHAREPREFERENCES_FIELD_FREQ_INDEX = "freq_index";
+    public static final String SHAREPREFERENCES_FIELD_STEP_INDEX = "step_index";
+    public static final String SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX = "low_battery_index";
 
     public static final int SHAREPREFERENCES_CHECK_FAIL = -1;
     public static final int SHAREPREFERENCES_WRITE_FAIL = -1;
