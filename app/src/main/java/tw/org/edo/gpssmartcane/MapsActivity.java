@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View.OnClickListener mSettingImageViewListener;
 
     int mNowYear;
-    int mNowMounh;
+    int mNowMonth;
     int mNowDay;
     int mNowHour;
     int mMinute;
@@ -126,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Calendar c = Calendar.getInstance();
         mNowYear = c.get(Calendar.YEAR);
-        mNowMounh = c.get(Calendar.MONTH); // index is 0 ~ 11
+        mNowMonth = c.get(Calendar.MONTH); // index is 0 ~ 11
         mNowDay = c.get(Calendar.DAY_OF_MONTH);
         mNowHour = c.get(Calendar.HOUR_OF_DAY);
         mMinute = c.get(Calendar.MINUTE);
@@ -198,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 final TextView textView = (TextView) view;
                 Log.i(TAG, "onClick: mStartDateTextView");
-                Log.i(TAG, "Now Date: " + mNowYear + "/" + mNowMounh + "/" + mNowDay);
+                Log.i(TAG, "Now Date: " + mNowYear + "/" + (mNowMonth+1) + "/" + mNowDay);
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -207,7 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 textView.setText(mStartDate);
                                 drawHistory();
                             }
-                        }, mNowYear, mNowMounh, mNowDay);
+                        }, mNowYear, mNowMonth, mNowDay);
                 dpd.setTitle("Select Start Date");
                 dpd.show(getFragmentManager(), "DatePickerDialog");
             }
@@ -245,7 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 final TextView textView = (TextView) view;
                 Log.i(TAG, "onClick: mEndDateTextView");
-                Log.i(TAG, "Now Date: " + mNowYear + "/" + mNowMounh + "/" + mNowDay);
+                Log.i(TAG, "Now Date: " + mNowYear + "/" + (mNowMonth+1) + "/" + mNowDay);
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -254,7 +254,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 textView.setText(mEndDate);
                                 drawHistory();
                             }
-                        }, mNowYear, mNowMounh, mNowDay);
+                        }, mNowYear, mNowMonth, mNowDay);
                 dpd.setTitle("Select End Date");
                 dpd.show(getFragmentManager(), "DatePickerDialog");
             }
