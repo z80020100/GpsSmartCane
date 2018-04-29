@@ -7,15 +7,37 @@ import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
+
+import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_CANE_UID;
+import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT;
+import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_FREQ;
+import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_STEP;
+import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_USER_ID;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_SETTING_FAIL;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_STEP_INDEX;
+import static tw.org.edo.gpssmartcane.Constant.URL_EDIT_PARAMETERS;
+
 public class CaneSettingActivity extends AppCompatActivity {
     final private  String TAG = this.getClass().getSimpleName();
 
     private Context mContext = this;
     private SettingManager mSettingManager;
 
-    private int[] mFreqArray = {1, 3, 5, 10, 15, 20, 30};
-    private int[] mStepArray = {1, 3, 5, 10 ,20 ,30};
-    private int[] mLowBatteryArray = {50, 40, 30 ,20 ,10};
+    private Runnable mHttpRunnable;
+    private Thread mHttpThread;
+    private String mParaNames;
+    private String mParaValue;
+    private String mParaIndex;
+
+    private int[] mFreqArray = {1, 3, 5, 10, 15, 20, 30}; // minutes
+    private int[] mStepArray = {1, 3, 5, 10 ,20 ,30}; // steps
+    private int[] mLowBatteryArray = {50, 40, 30 ,20 ,10}; // percent
 
     private SeekBar mFreqSeekBar, mStepSeekBar, mLowBatterySeekBar;
 
@@ -34,6 +56,8 @@ public class CaneSettingActivity extends AppCompatActivity {
 
         mFreqSeekBar = findViewById(R.id.seekBarFrequency);
         mFreqSeekBar.setMax(mFreqArray.length-1);
+        mFreqSeekBar.setProgress(Integer.valueOf(SettingManager.sFreqIndex));
+        setFreqCurrent(Integer.valueOf(SettingManager.sFreqIndex));
         mFreqSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -50,11 +74,19 @@ public class CaneSettingActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.i(TAG, "onStopTrackingTouch: progress = " + seekBar.getProgress());
+
+                mParaNames = NAME_EDIT_PARAMETERS_SET_FREQ;
+                mParaValue = String.valueOf(mFreqArray[seekBar.getProgress()]);
+                mParaIndex = String.valueOf(seekBar.getProgress());
+                mHttpThread = new Thread(mHttpRunnable);
+                mHttpThread.start();
             }
         });
 
         mStepSeekBar = findViewById(R.id.seekBarStep);
         mStepSeekBar.setMax(mStepArray.length-1);
+        mStepSeekBar.setProgress(Integer.valueOf(SettingManager.sStepIndex));
+        setStepCurrent(Integer.valueOf(SettingManager.sStepIndex));
         mStepSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -77,11 +109,19 @@ public class CaneSettingActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.i(TAG, "onStopTrackingTouch: progress = " + seekBar.getProgress());
+
+                mParaNames = NAME_EDIT_PARAMETERS_SET_STEP;
+                mParaValue = String.valueOf(mStepArray[seekBar.getProgress()]);
+                mParaIndex = String.valueOf(seekBar.getProgress());
+                mHttpThread = new Thread(mHttpRunnable);
+                mHttpThread.start();
             }
         });
 
         mLowBatterySeekBar = findViewById(R.id.seekBarLowBattery);
         mLowBatterySeekBar.setMax(mLowBatteryArray.length-1);
+        mLowBatterySeekBar.setProgress(Integer.valueOf(SettingManager.sLowBatteryIndex));
+        setLowBetteryCurrent(Integer.valueOf(SettingManager.sLowBatteryIndex));
         mLowBatterySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -98,23 +138,74 @@ public class CaneSettingActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.i(TAG, "onStopTrackingTouch: progress = " + seekBar.getProgress());
+
+                mParaNames = NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT;
+                mParaValue = String.valueOf(mLowBatteryArray[seekBar.getProgress()]);
+                mParaIndex = String.valueOf(seekBar.getProgress());
+                mHttpThread = new Thread(mHttpRunnable);
+                mHttpThread.start();
             }
         });
 
+        mHttpRunnable = new Runnable(){
+            @Override
+            public void run() {
+                if(mParaNames != null && mParaValue != null && mParaIndex != null){
+                    Log.i(TAG, "Set " + mParaNames + " = " + mParaValue);
+                    String url = URL_EDIT_PARAMETERS;
+                    ArrayList<NameValuePair> params = new ArrayList<>();
+                    params.add(new BasicNameValuePair(NAME_EDIT_PARAMETERS_USER_ID, SettingManager.sUserId));
+                    params.add(new BasicNameValuePair(NAME_EDIT_PARAMETERS_CANE_UID, SettingManager.sCaneId));
+                    params.add(new BasicNameValuePair(mParaNames, mParaValue));
+                    String return_data = DBConnector.executeQuery(params, url, SettingManager.sSessionIdFieldName, SettingManager.sSessionId);
+                    Log.i(TAG, "return_data = " + return_data);
+                    final int settingResult = Character.getNumericValue(return_data.charAt(0));
+                    Log.i(TAG, "settingResult = " + settingResult);
 
-        setFreqCurrent(Integer.valueOf(SettingManager.sFreqIndex));
-        setStepCurrent(Integer.valueOf(SettingManager.sStepIndex));
-        setLowBetteryCurrent(Integer.valueOf(SettingManager.sStepIndex));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(settingResult == RESULT_SETTING_FAIL){
+                                Utility.makeTextAndShow(mContext, "設定失敗", 2);
+
+                                setFreqCurrent(Integer.valueOf(SettingManager.sFreqIndex));
+                                mFreqSeekBar.setProgress(Integer.valueOf(SettingManager.sFreqIndex));
+
+                                setStepCurrent(Integer.valueOf(SettingManager.sStepIndex));
+                                mStepSeekBar.setProgress(Integer.valueOf(SettingManager.sStepIndex));
+
+                                setLowBetteryCurrent(Integer.valueOf(SettingManager.sLowBatteryIndex));
+                                mLowBatterySeekBar.setProgress(Integer.valueOf(SettingManager.sLowBatteryIndex));
+                            }
+                            else{
+                                if(mParaNames == NAME_EDIT_PARAMETERS_SET_FREQ){
+                                    mSettingManager.writeData(SHAREPREFERENCES_FIELD_FREQ_INDEX, mParaIndex);
+                                }
+                                else if(mParaNames == NAME_EDIT_PARAMETERS_SET_STEP){
+                                    mSettingManager.writeData(SHAREPREFERENCES_FIELD_STEP_INDEX, mParaIndex);
+                                }
+                                else if(mParaNames == NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT){
+                                    mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX, mParaIndex);
+                                }
+                            }
+
+                            mParaNames = mParaValue = mParaIndex = null;
+                        }
+                    });
+                }
+                else{
+                    Log.e(TAG, "No parameters need to be set");
+                }
+            }
+        };
     }
 
     private void setFreqCurrent(int index){
-        mFreqSeekBar.setProgress(index);
         String nowValueString = "(" + mFreqArray[index] + " min.)";
         mFreqCurrent.setText(nowValueString);
     }
 
     private void setStepCurrent(int index){
-        mFreqSeekBar.setProgress(index);
         String nowValueString;
         if(index == 0){
             nowValueString = "(" + mStepArray[index] + " step)";
@@ -126,7 +217,6 @@ public class CaneSettingActivity extends AppCompatActivity {
     }
 
     private void setLowBetteryCurrent(int index){
-        mLowBatterySeekBar.setProgress(index);
         String nowValueString = "(" + mLowBatteryArray[index] + " %)";
         mLowBatteryCurrent.setText(nowValueString);
     }

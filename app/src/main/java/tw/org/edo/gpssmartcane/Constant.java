@@ -15,11 +15,15 @@ public class Constant {
     public static final int RESULT_QUERY_STATUS_FAIL = -1;
     public static final int RESULT_QUERY_STATUS_SUCCESS = 0;
 
+    public static final int RESULT_SETTING_SUCCESS = 1;
+    public static final int RESULT_SETTING_FAIL = -1;
+
     public static final String RETURN_VALUE_LOGIN = "return_value_login";
 
     public static final String URL_LOGIN = "http://edo.org.tw/cane/gmap.asp";
     public static final String URL_SEARCH_HISTORY = "http://edo.org.tw/cane/gmapqry.asp";
     public static final String URL_QUERY_STATUS = "http://edo.org.tw/cane/cane_qry.asp";
+    public static final String URL_EDIT_PARAMETERS = "http://edo.org.tw/cane/cane_edit.asp";
 
     public static final String NAME_LOGIN_EMAIL = "email";
     public static final String NAME_LOGIN_PASSWORD = "pwd";
@@ -27,6 +31,15 @@ public class Constant {
     public static final String NAME_SEARCH_HISTORY_START_RANGE = "b";
     public static final String NAME_SEARCH_HISTORY_END_RANGE = "c";
     public static final String NAME_QUERY_STATUS_USER_ID = "id";
+
+    public static final String NAME_EDIT_PARAMETERS_USER_ID = "id";
+    public static final String NAME_EDIT_PARAMETERS_CANE_UID = "uid";
+    public static final String NAME_EDIT_PARAMETERS_CANE_NAME = "cane_name";
+    public static final String NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT = "battery_alert";
+    public static final String NAME_EDIT_PARAMETERS_SET_FREQ = "set_freq";
+    public static final String NAME_EDIT_PARAMETERS_SET_STEP = "set_count";
+    public static final String NAME_EDIT_PARAMETERS_EMERGY_CALL = "emergy_call";
+    public static final String NAME_EDIT_PARAMETERS_EMERGY_MAIL = "emergy_mail";
 
     public static final String COOKIE_ASP_SESSION_ID_NAME_PREFIX = "ASPSESSIONID";
 
