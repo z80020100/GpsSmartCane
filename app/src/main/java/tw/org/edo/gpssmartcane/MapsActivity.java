@@ -494,7 +494,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
                     .title(cane_name)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.little_man)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_man)));
             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 16));
         }
     }
