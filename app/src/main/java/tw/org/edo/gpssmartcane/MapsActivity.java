@@ -184,8 +184,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mSettingImageViewListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, CaneSettingActivity.class);
-                startActivityForResult(intent, ACTIVITY_SETTING);
+                if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
+                    Intent intent = new Intent(mContext, CaneSettingActivity.class);
+                    startActivityForResult(intent, ACTIVITY_SETTING);
+                }
+                else{
+                    Utility.makeTextAndShow(mContext, "請先登入", 2);
+                }
+
             }
         };
         mSettingImageView.setOnClickListener(mSettingImageViewListener);
