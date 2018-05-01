@@ -87,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageView mCaneImageView;
     private ImageView mEmergencyImageView;
     private ImageView mHistoryImageView;
+    private View.OnClickListener mBlankViewListener;
 
     private Animation mAnimBatteryFlashS1;
     private Animation mAnimBatteryFlashS2;
@@ -200,6 +201,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mEmergencyImageView = findViewById(R.id.emergency_status);
         mHistoryImageView = findViewById(R.id.history);
         mSettingImageView = findViewById(R.id.setting);
+
+        mBlankViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Bind blank onClickListener for avoid affecting on map via click the icon
+            }
+        };
+        mBatteryImageView.setOnClickListener(mBlankViewListener);
+        mLightImageView.setOnClickListener(mBlankViewListener);
+        mCaneImageView.setOnClickListener(mBlankViewListener);
+        mEmergencyImageView.setOnClickListener(mBlankViewListener);
+        mHistoryImageView.setOnClickListener(mBlankViewListener);
 
         mHistoryImageViewListener = new View.OnClickListener() {
             @Override
