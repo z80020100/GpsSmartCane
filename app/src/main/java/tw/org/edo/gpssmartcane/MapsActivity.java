@@ -600,8 +600,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mBatteryCapacity.setText(String.valueOf(mDataStatus.batteryCapacity));
         if(mDataStatus.batteryCapacity <= mDataStatus.batteryAlertThreshold){
             mBatteryCapacity.setTextColor(Color.rgb(255, 0, 0));
-            Log.i(TAG, "Need to flash the battery icon");
             if(mBatteryFlash == false){
+                Log.i(TAG, "Start to blink the battery icon");
                 mBatteryFlash = true;
                 mBatteryImageView.startAnimation(mAnimBatteryFlashS1);
             }
@@ -615,7 +615,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mBatteryImageView.setImageResource(R.mipmap.battery_normal);
         }
 
-        mLightImageView.setImageResource(R.mipmap.light_off);
+        if(mDataStatus.lightStatus == false){
+            mLightImageView.setImageResource(R.mipmap.light_off);
+        }
+        else{
+            mLightImageView.setImageResource(R.mipmap.light_on);
+        }
+
         mCaneImageView.setImageResource(R.mipmap.cane_normal);
         mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
     }
