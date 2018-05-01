@@ -13,8 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -91,6 +91,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Animation mAnimBatteryFlashS1;
     private Animation mAnimBatteryFlashS2;
     private boolean mBatteryFlash = false;
+
+    private Animation mAnimCaneFallBlinkS1;
+    private Animation mAnimCaneFallBlinkS2;
+    private boolean mCaneFallBlink = false;
 
     private ImageView mSettingImageView;
 
@@ -425,6 +429,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mEndTimeTextView.setVisibility(View.GONE);
 
         initialBatteryFlashAnimation();
+        initialCaneFallBlinkAnimation();
     }
 
 
@@ -606,7 +611,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mBatteryImageView.startAnimation(mAnimBatteryFlashS1);
             }
             else{
-                Log.i(TAG, "[Update Status] battery icon flashing");
+                Log.i(TAG, "[Update Status] Battery icon flashing");
             }
         }
         else{
@@ -622,7 +627,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mLightImageView.setImageResource(R.mipmap.light_on);
         }
 
-        mCaneImageView.setImageResource(R.mipmap.cane_normal);
+        if(mDataStatus.caneFall == false){
+            mCaneFallBlink = false;
+            mCaneImageView.setImageResource(R.mipmap.cane_normal);
+        }
+        else{
+            if(mCaneFallBlink == false){
+                Log.i(TAG, "Start to blink the cane icon");
+                mCaneFallBlink = true;
+                mCaneImageView.startAnimation(mAnimCaneFallBlinkS1);
+            }
+            else{
+                Log.i(TAG, "[Update Status] Cane icon flashing");
+            }
+        }
+
         mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
     }
 
@@ -863,8 +882,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void initialBatteryFlashAnimation(){
-        mAnimBatteryFlashS1 = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
-        mAnimBatteryFlashS2 = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        mAnimBatteryFlashS1 = new AlphaAnimation(1f, 1f);
+        mAnimBatteryFlashS2 = new AlphaAnimation(1f, 1f);
+        mAnimBatteryFlashS1.setDuration(500L);
+        mAnimBatteryFlashS2.setDuration(500L);
         mAnimBatteryFlashS1.setAnimationListener(new Animation.AnimationListener()
         {
             @Override public void onAnimationStart(Animation animation) {
@@ -883,6 +904,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override public void onAnimationRepeat(Animation animation) {}
             @Override public void onAnimationEnd(Animation animation) {
                 if(mBatteryFlash) mBatteryImageView.startAnimation(mAnimBatteryFlashS1);
+            }
+        });
+    }
+
+    private void initialCaneFallBlinkAnimation(){
+        mAnimCaneFallBlinkS1 = new AlphaAnimation(1f, 1f);
+        mAnimCaneFallBlinkS2 = new AlphaAnimation(1f, 1f);
+        mAnimCaneFallBlinkS1.setDuration(500L);
+        mAnimCaneFallBlinkS2.setDuration(500L);
+        mAnimCaneFallBlinkS1.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override public void onAnimationStart(Animation animation) {
+                mCaneImageView.setImageResource(R.mipmap.cane_falldown_s1);
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation)
+            {
+                if(mCaneFallBlink) mCaneImageView.startAnimation(mAnimCaneFallBlinkS2);
+            }
+        });
+        mAnimCaneFallBlinkS2.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                mCaneImageView.setImageResource(R.mipmap.cane_falldown_s2);
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) {
+                if(mCaneFallBlink) mCaneImageView.startAnimation(mAnimCaneFallBlinkS1);
             }
         });
     }
