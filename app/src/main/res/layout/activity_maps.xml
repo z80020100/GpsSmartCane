@@ -56,7 +56,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:textSize="20dp"
-            android:text="100 "
+            android:text=""
             android:gravity="center"
             map:layout_constraintStart_toStartOf="@+id/login"
             map:layout_constraintTop_toTopOf="parent" />

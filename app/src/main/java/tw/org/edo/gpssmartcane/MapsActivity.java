@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -86,6 +88,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageView mEmergencyImageView;
     private ImageView mHistoryImageView;
 
+    private Animation mAnimBatteryFlashS1;
+    private Animation mAnimBatteryFlashS2;
+    private boolean mBatteryFlash = false;
+
     private ImageView mSettingImageView;
 
     private boolean mSearchVisiable = false;
@@ -125,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mPollingThreadDebug = false;
     private Runnable mPollingStatusRunnable;
     private Thread mPollingStatusThread;
-    private long mPollingPeriod = 2000L;
+    private long mPollingPeriod = 1000L;
 
     @Override
     public void onPause() {
@@ -417,6 +423,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mStartTimeTextView.setVisibility(View.GONE);
         mEndDateTextView.setVisibility(View.GONE);
         mEndTimeTextView.setVisibility(View.GONE);
+
+        initialBatteryFlashAnimation();
     }
 
 
@@ -589,8 +597,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateStatusIcon(){
         mBatteryCapacity.bringToFront();
+        mBatteryCapacity.setText(String.valueOf(mDataStatus.batteryCapacity));
+        if(mDataStatus.batteryCapacity <= mDataStatus.batteryAlertThreshold){
+            mBatteryCapacity.setTextColor(Color.rgb(255, 0, 0));
+            Log.i(TAG, "Need to flash the battery icon");
+            if(mBatteryFlash == false){
+                mBatteryFlash = true;
+                mBatteryImageView.startAnimation(mAnimBatteryFlashS1);
+            }
+            else{
+                Log.i(TAG, "[Update Status] battery icon flashing");
+            }
+        }
+        else{
+            mBatteryFlash = false;
+            mBatteryCapacity.setTextColor(Color.rgb(0, 0, 0));
+            mBatteryImageView.setImageResource(R.mipmap.battery_normal);
+        }
 
-        mBatteryImageView.setImageResource(R.mipmap.battery_normal);
         mLightImageView.setImageResource(R.mipmap.light_off);
         mCaneImageView.setImageResource(R.mipmap.cane_normal);
         mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
@@ -829,5 +853,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.e(TAG, tag + " Not support multi cane yet");
             }
         }
+    }
+
+    private void initialBatteryFlashAnimation(){
+        mAnimBatteryFlashS1 = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        mAnimBatteryFlashS2 = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        mAnimBatteryFlashS1.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override public void onAnimationStart(Animation animation) {
+                mBatteryImageView.setImageResource(R.mipmap.battery_warning_s1);
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation)
+            {
+                if(mBatteryFlash) mBatteryImageView.startAnimation(mAnimBatteryFlashS2);
+            }
+        });
+        mAnimBatteryFlashS2.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                mBatteryImageView.setImageResource(R.mipmap.battery_warning_s2);
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) {
+                if(mBatteryFlash) mBatteryImageView.startAnimation(mAnimBatteryFlashS1);
+            }
+        });
     }
 }
