@@ -70,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<DataCurrentPosition> mDataCurrentPositionList = new ArrayList<>();
     private List<DataHistoryPosition> mDataHistoryPositionList = new ArrayList<>();
     private List<MarkerOptions> mHistiryMarkerOptions = new ArrayList<>();
+    private DataStatus mDataStatus = new DataStatus();
 
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
     public static final int LOCATION_UPDATE_MIN_TIME = 5000;
@@ -118,6 +119,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Thread mGetCurrentPositionThread;
     private String mGetCurrentPositionData;
     private int mGetCurrentPositionCheck = RESULT_LOGIN_FAIL;
+
+    private boolean mPollingStatusCtrl = false;
+    private boolean mPollingThreadDebug = false;
+    private Runnable mPollingStatusRunnable;
+    private Thread mPollingStatusThread;
+    private long mPollingPeriod = 2000L;
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        Log.i(TAG, "onPause");
+
+        mPollingStatusCtrl = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        Log.i(TAG, "onResume");
+
+        if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
+            mPollingStatusCtrl = true;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -295,14 +320,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mQueryStatusRunnable = new Runnable() {
             @Override
             public void run() {
-                String url = URL_QUERY_STATUS;
-                ArrayList<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair(NAME_QUERY_STATUS_USER_ID, SettingManager.sUserId));
-                String returnData = DBConnector.executeQuery(params, url, SettingManager.sSessionIdFieldName, SettingManager.sSessionId);
-                int queryStatusResult = Character.getNumericValue(returnData.charAt(0));
-                Log.i(TAG, "queryStatusResult = " + queryStatusResult);
-                if(queryStatusResult != RESULT_QUERY_STATUS_FAIL){
-                    mQueryStatusCheck = RESULT_QUERY_STATUS_SUCCESS;
+                queryStatusData("[Status]", true);
+            }
+        };
+
+        mPollingStatusRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "[Polling] Start polling thread");
+                int pollingCnt = 0;
+                //noinspection InfiniteLoopStatement
+                while(true){
+                    if(mPollingStatusCtrl){
+                        if(mPollingThreadDebug)  Log.i(TAG, "[Polling] pollingCnt = " + pollingCnt);
+                        queryStatusData("[Polling]", mPollingThreadDebug);
+                    }
+                    else{
+                        if(mPollingThreadDebug)  Log.i(TAG, "[Polling] Pause polling");
+                    }
+
+                    try {
+                        Thread.sleep(mPollingPeriod);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    pollingCnt++;
                 }
             }
         };
@@ -316,7 +358,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 params.add(new BasicNameValuePair(NAME_LOGIN_PASSWORD, SettingManager.sPassword));
                 String returnData = DBConnector.executeQuery(params, url);
                 mGetCurrentPositionCheck = Character.getNumericValue(returnData.charAt(0));
-                Log.i(TAG, "mGetCurrentPositionCheck = " + mGetCurrentPositionCheck);
+                Log.i(TAG, "[CurrentPosition] mGetCurrentPositionCheck = " + mGetCurrentPositionCheck);
                 if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
                     mGetCurrentPositionData = returnData;
                 }
@@ -329,12 +371,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mSettingManager = new SettingManager(mContext);
         if(mSettingManager.checkData() == SHAREPREFERENCES_CHECK_FAIL){
-            Log.e(TAG, "No login information!");
+            Log.e(TAG, "[CurrentPosition] No login information!");
             changeUi(false);
         }
         else{
-            Log.i(TAG, "Detect login information");
-            Log.i(TAG, "Try to get cane status...");
+            Log.i(TAG, "[CurrentPosition] Detect login information");
+            Log.i(TAG, "[CurrentPosition] Try to get cane status...");
             mQueryStatusThread = new Thread(mQueryStatusRunnable);
             mQueryStatusThread.start();
             try {
@@ -355,12 +397,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
-                    Log.i(TAG, "Get current position success");
+                    Log.i(TAG, "[CurrentPosition] Get current position success");
                     changeUi(true);
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                 }
                 else{
-                    Log.e(TAG, "Get current position failed...");
+                    Log.e(TAG, "[CurrentPosition] Get current position failed...");
                     changeUi(false);
                     Utility.makeTextAndShow(mContext, "登入失敗，請嘗試手動登入", 2);
                 }
@@ -389,9 +431,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.i(TAG, "onMapReady");
         mGoogleMap = googleMap;
         if(mGetCurrentPositionData != null){
             drawCurrent(mGetCurrentPositionData);
+
+            mPollingStatusThread = new Thread(mPollingStatusRunnable);
+            mPollingStatusCtrl = true;
+            mPollingStatusThread.start();
         }
     }
 
@@ -560,6 +607,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
                     drawCurrent(result);
                     changeUi(true);
+
+                    mPollingStatusThread = new Thread(mPollingStatusRunnable);
+                    mPollingStatusCtrl = true;
+                    mPollingStatusThread.start();
                 }
                 else{
                     Log.e(TAG, "Return from ACTIVITY_LOGIN: resultCode = " + resultCode);
@@ -569,16 +620,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawCurrent(String result){
         String[] splited_data = Utility.dataSplitter(result);
-        Log.i(TAG, "User ID: " + splited_data[0]);
+        Log.i(TAG, "[drawCurrent] User ID: " + splited_data[0]);
         mSettingManager.writeData(SHAREPREFERENCES_FIELD_USER_ID, splited_data[0]);
-        Log.i(TAG, "Cane Quantity: " + splited_data[1]);
+        Log.i(TAG, "[drawCurrent] Cane Quantity: " + splited_data[1]);
 
         for(int i = 0; i < Integer.parseInt(splited_data[1]); i++){
             String uid = splited_data[i*6+2];
             String cane_name = splited_data[i*6+3];
             String latitude_dmm = splited_data[i*6+4];
             if(latitude_dmm.equals(RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL)){
-                Log.e(TAG, "No GPS signal");
+                Log.e(TAG, "[drawCurrent] No GPS signal");
                 Utility.makeTextAndShow(mContext, "無GPS訊號", 2);
             }
             else{
@@ -601,7 +652,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         for(int i = 0; i < mDataCurrentPositionList.size(); i++){
-            Log.i(TAG, "" + mDataCurrentPositionList.get(i).toString());
+            Log.i(TAG, "[drawCurrent] " + mDataCurrentPositionList.get(i).toString());
         }
 
         if(mDataCurrentPositionList.size() > 0){
@@ -737,6 +788,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCaneImageView.setVisibility(View.GONE);
             mEmergencyImageView.setVisibility(View.GONE);
             mHistoryImageView.setVisibility(View.GONE);
+        }
+    }
+
+    private void queryStatusData(String tag, boolean debug){
+        String url = URL_QUERY_STATUS;
+        ArrayList<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(NAME_QUERY_STATUS_USER_ID, SettingManager.sUserId));
+        String returnData = DBConnector.executeQuery(params, url, SettingManager.sSessionIdFieldName, SettingManager.sSessionId);
+        int queryStatusResult = Character.getNumericValue(returnData.charAt(0));
+        if(debug) Log.i(TAG, tag + " queryStatusResult = " + queryStatusResult);
+        if(queryStatusResult != RESULT_QUERY_STATUS_FAIL){
+            mQueryStatusCheck = RESULT_QUERY_STATUS_SUCCESS;
+            String[] splitData = Utility.dataSplitter(returnData);
+            if(debug) Log.i(TAG, String.format(tag + " Cane Quantity: %s", splitData[0]));
+
+            /*
+            for(int i = 0; i < splitData.length; i++ ){
+                Log.i(TAG, tag + " " + String.format("Status Data[%d] = %s", i, splitData[i]));
+            }
+            */
+
+            if(Integer.valueOf(splitData[0]) == 1){
+                mDataStatus.setData(splitData[1], splitData[2], Integer.valueOf(splitData[3]), Integer.valueOf(splitData[4]),
+                        Boolean.parseBoolean(splitData[5]), Boolean.parseBoolean(splitData[6]), Boolean.parseBoolean(splitData[7]),
+                        splitData[8], splitData[9], splitData[10],
+                        splitData[11], splitData[12], Boolean.parseBoolean(splitData[13]));
+                if(debug) Log.i(TAG, tag + " " + mDataStatus.toString());
+            }
+            else{
+                Log.e(TAG, tag + " Not support multi cane yet");
+            }
         }
     }
 }
