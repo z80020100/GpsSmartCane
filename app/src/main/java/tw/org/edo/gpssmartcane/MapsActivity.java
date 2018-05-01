@@ -79,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button mLoginButton;
     private Button.OnClickListener mLoginButtonListen;
 
+    private TextView mBatteryCapacity;
     private ImageView mBatteryImageView;
     private ImageView mLightImageView;
     private ImageView mCaneImageView;
@@ -178,6 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         mLoginButton.setOnClickListener(mLoginButtonListen);
 
+        mBatteryCapacity = findViewById(R.id.battery_status_capacity);
         mBatteryImageView = findViewById(R.id.battery_status);
         mLightImageView = findViewById(R.id.light_status);
         mCaneImageView = findViewById(R.id.cane_status);
@@ -220,8 +222,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         mSettingImageView.setOnClickListener(mSettingImageViewListener);
-
-        updateStatusIcon();
 
         mStartDateTextView = findViewById(R.id.start_date);
         mStartDateTextViewListener = new View.OnClickListener() {
@@ -588,6 +588,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateStatusIcon(){
+        mBatteryCapacity.bringToFront();
+
         mBatteryImageView.setImageResource(R.mipmap.battery_normal);
         mLightImageView.setImageResource(R.mipmap.light_off);
         mCaneImageView.setImageResource(R.mipmap.cane_normal);
@@ -815,6 +817,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         splitData[8], splitData[9], splitData[10],
                         splitData[11], splitData[12], Boolean.parseBoolean(splitData[13]));
                 if(debug) Log.i(TAG, tag + " " + mDataStatus.toString());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateStatusIcon();
+                    }
+                });
             }
             else{
                 Log.e(TAG, tag + " Not support multi cane yet");

@@ -49,6 +49,18 @@
             map:layout_constraintTop_toTopOf="parent"
             map:layout_constraintVertical_bias="0.0" />
 
+        <TextView
+            android:id="@+id/battery_status_capacity"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:textSize="20dp"
+            android:text="100 "
+            android:gravity="center"
+            map:layout_constraintStart_toStartOf="@+id/login"
+            map:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/battery_status"
             android:layout_width="48dp"
