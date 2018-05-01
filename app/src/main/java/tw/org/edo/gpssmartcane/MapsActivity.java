@@ -628,6 +628,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case ACTIVITY_LOGIN:
                 Log.i(TAG, "Back from ACTIVITY_LOGIN");
                 if(resultCode == RESULT_LOGIN_SUCCESS){
+                    mGetCurrentPositionCheck = RESULT_LOGIN_SUCCESS;
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
