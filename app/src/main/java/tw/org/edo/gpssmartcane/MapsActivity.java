@@ -96,6 +96,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Animation mAnimCaneFallBlinkS2;
     private boolean mCaneFallBlink = false;
 
+    private Animation mAnimEmergencyBlinkS1;
+    private Animation mAnimEmergencyBlinkS2;
+    private boolean mEmergencyBlink = false;
+
     private ImageView mSettingImageView;
 
     private boolean mSearchVisiable = false;
@@ -430,6 +434,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         initialBatteryFlashAnimation();
         initialCaneFallBlinkAnimation();
+        initialEmergencyBlinkAnimation();
     }
 
 
@@ -611,7 +616,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mBatteryImageView.startAnimation(mAnimBatteryFlashS1);
             }
             else{
-                Log.i(TAG, "[Update Status] Battery icon flashing");
+                Log.i(TAG, "[Update Status] Battery icon is blinking");
             }
         }
         else{
@@ -638,11 +643,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mCaneImageView.startAnimation(mAnimCaneFallBlinkS1);
             }
             else{
-                Log.i(TAG, "[Update Status] Cane icon flashing");
+                Log.i(TAG, "[Update Status] Cane icon is blinking");
             }
         }
 
-        mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
+        if(mDataStatus.emergencyNotice == true){
+            if(mEmergencyBlink == false){
+                Log.i(TAG, "Start to blink the emergency icon");
+                mEmergencyBlink = true;
+                mEmergencyImageView.startAnimation(mAnimEmergencyBlinkS1);
+            }
+            else{
+                Log.i(TAG, "[Update Status] Emergency icon is blinking");
+            }
+        }
+        else{
+            mEmergencyBlink = false;
+            mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
+        }
     }
 
     @Override
@@ -931,6 +949,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override public void onAnimationRepeat(Animation animation) {}
             @Override public void onAnimationEnd(Animation animation) {
                 if(mCaneFallBlink) mCaneImageView.startAnimation(mAnimCaneFallBlinkS1);
+            }
+        });
+    }
+
+    private void initialEmergencyBlinkAnimation(){
+        mAnimEmergencyBlinkS1 = new AlphaAnimation(1f, 1f);
+        mAnimEmergencyBlinkS2 = new AlphaAnimation(1f, 1f);
+        mAnimEmergencyBlinkS1.setDuration(500L);
+        mAnimEmergencyBlinkS2.setDuration(500L);
+        mAnimEmergencyBlinkS1.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override public void onAnimationStart(Animation animation) {
+                mEmergencyImageView.setImageResource(R.mipmap.emergency_alert_s1);
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation)
+            {
+                if(mEmergencyBlink) mEmergencyImageView.startAnimation(mAnimEmergencyBlinkS2);
+            }
+        });
+        mAnimEmergencyBlinkS2.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                mEmergencyImageView.setImageResource(R.mipmap.emergency_alert_s2);
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) {
+                if(mEmergencyBlink) mEmergencyImageView.startAnimation(mAnimEmergencyBlinkS1);
             }
         });
     }
