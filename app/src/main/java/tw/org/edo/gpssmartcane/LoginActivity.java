@@ -22,8 +22,6 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_EMAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_PASSWORD;
-import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID;
-import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME;
 import static tw.org.edo.gpssmartcane.Constant.URL_LOGIN;
 
 public class LoginActivity extends AppCompatActivity {
@@ -81,8 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                                 setResult(mLoginResult, mIntent);
                                 Log.i(TAG, "Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
                                 Log.i(TAG, "Session ID = " + DBConnector.getSessionIdValue());
-                                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME, DBConnector.getsAspSessionIdFieldName());
-                                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, DBConnector.getSessionIdValue());
+                                mSettingManager.writeSessionData(DBConnector.getsAspSessionIdFieldName(), DBConnector.getSessionIdValue());
                                 mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_EMAIL, mUserName);
                                 mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_PASSWORD, mPassword);
                                 finish();

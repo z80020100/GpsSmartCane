@@ -388,6 +388,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i(TAG, "[CurrentPosition] mGetCurrentPositionCheck = " + mGetCurrentPositionCheck);
                 if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
                     mGetCurrentPositionData = returnData;
+                    Log.i(TAG, "[CurrentPosition] Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
+                    Log.i(TAG, "[CurrentPosition] Session ID = " + DBConnector.getSessionIdValue());
+                    mSettingManager.writeSessionData(DBConnector.getsAspSessionIdFieldName(), DBConnector.getSessionIdValue());
                 }
                 else{
                     mGetCurrentPositionData = null;

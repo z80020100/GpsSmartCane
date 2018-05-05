@@ -46,8 +46,6 @@ public class Constant {
     public static final String SHAREPREFERENCES_FILE_NAME = "data";
     public static final String SHAREPREFERENCES_FIELD_LOGIN_EMAIL = "email";
     public static final String SHAREPREFERENCES_FIELD_LOGIN_PASSWORD = "pwd";
-    public static final String SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID = "session_id";
-    public static final String SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME = "session_id_field_name";
     public static final String SHAREPREFERENCES_FIELD_USER_ID = "user_id";
     public static final String SHAREPREFERENCES_FIELD_CANE_UID = "cane_uid";
     public static final String SHAREPREFERENCES_FIELD_FREQ_INDEX = "freq_index";
