@@ -188,7 +188,7 @@ public class CaneSettingActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             if(settingResult == RESULT_SETTING_FAIL){
-                                Utility.makeTextAndShow(mContext, "設定失敗", 2);
+                                Utility.makeTextAndShow(mContext, "錯誤：設定失敗", 2);
 
                                 setFreqCurrent(Integer.valueOf(SettingManager.sFreqIndex));
                                 mFreqSeekBar.setProgress(Integer.valueOf(SettingManager.sFreqIndex));
