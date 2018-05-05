@@ -120,6 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View.OnClickListener mEndTimeTextViewListener;
     private View.OnClickListener mHistoryImageViewListener;
     private View.OnClickListener mSettingImageViewListener;
+    private View.OnClickListener mCaneImageViewViewListener;
 
     int mNowYear;
     int mNowMonth;
@@ -210,7 +211,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         mBatteryImageView.setOnClickListener(mBlankViewListener);
         mLightImageView.setOnClickListener(mBlankViewListener);
-        mCaneImageView.setOnClickListener(mBlankViewListener);
         mEmergencyImageView.setOnClickListener(mBlankViewListener);
         mHistoryImageView.setOnClickListener(mBlankViewListener);
 
@@ -249,6 +249,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         mSettingImageView.setOnClickListener(mSettingImageViewListener);
+
+        mCaneImageViewViewListener = new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(mGetCurrentPositionData != null){
+                    drawCurrent(mGetCurrentPositionData, true);
+                }
+                else{
+                    Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖現在位置", 2);
+                }
+            }
+        };
+        mCaneImageView.setOnClickListener(mCaneImageViewViewListener);
 
         mStartDateTextView = findViewById(R.id.start_date);
         mStartDateTextViewListener = new View.OnClickListener() {
@@ -419,10 +432,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else{
                     Log.e(TAG, "[CurrentPosition] Get current position failed...");
                     changeUi(false);
-                    Utility.makeTextAndShow(mContext, "登入失敗，請嘗試手動登入", 2);
+                    Utility.makeTextAndShow(mContext, "錯誤：登入失敗，請嘗試手動登入", 2);
                 }
             }
             else{
+                Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 2);
                 Log.e(TAG, "Get cane status failed...");
                 changeUi(false);
             }
@@ -869,7 +883,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Utility.makeTextAndShow(mContext, "查詢失敗", 2);
+                                Utility.makeTextAndShow(mContext, "錯誤：查詢失敗", 2);
                             }
                         });
                     }
@@ -930,6 +944,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{
             Log.e(TAG, "[queryCurrentPosition]mGetCurrentPositionCheck = RESULT_LOGIN_FAIL");
+            Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖現在位置", 1);
             mGetCurrentPositionData = null;
         }
     }
@@ -973,6 +988,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             else{
                 Log.e(TAG, tag + " Not support multi cane yet");
             }
+        }
+        else{
+            Log.e(TAG, "[queryStatusData]queryStatusResult = RESULT_QUERY_STATUS_FAIL");
+            Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 1);
         }
     }
 
