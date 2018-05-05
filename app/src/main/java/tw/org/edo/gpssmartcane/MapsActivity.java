@@ -455,7 +455,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleMap.clear();
 
         if(mGetCurrentPositionData != null){
-            drawCurrent(mGetCurrentPositionData);
+            drawCurrent(mGetCurrentPositionData, true);
 
             mPollingStatusThread = new Thread(mPollingStatusRunnable);
             mPollingStatusCtrl = true;
@@ -555,7 +555,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void drawMarkerCaneCurrent(String cane_name, double latitude_dd, double longitude_dd) {
+    private void drawMarkerCaneCurrentIcon(String cane_name, double latitude_dd, double longitude_dd, boolean camera_move) {
         if (mGoogleMap != null) {
             //mGoogleMap.clear();
             LatLng gps = new LatLng(latitude_dd, longitude_dd);
@@ -563,7 +563,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .position(gps)
                     .title(cane_name)
                     .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_man)));
-            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 16));
+            if(camera_move){
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 18));
+            }
+        }
+    }
+
+    private void drawMarkerCaneCurrentCircle(final String cane_name, double latitude_dd, double longitude_dd, boolean camera_move) {
+        if (mGoogleMap != null) {
+            //mGoogleMap.clear();
+            final LatLng gps = new LatLng(latitude_dd, longitude_dd);
+
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(gps)
+                    .strokeColor(Color.argb(255, 0, 0, 0))
+                    .fillColor(Color.argb(0, 68, 114, 196))
+                    .radius(5) // In meters
+                    .clickable(true);
+            // Get back the mutable Circle
+            final Circle circle = mGoogleMap.addCircle(circleOptions);
+
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(gps)
+                    .alpha(0F)
+                    .title(cane_name);
+            mHistiryMarkerOptions.add(markerOptions);
+            final Marker melbourne = mGoogleMap.addMarker(markerOptions);
+
+            mGoogleMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
+                @Override
+                public void onCircleClick(Circle circle) {
+                    melbourne.showInfoWindow();
+                }
+            });
+
+            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    return false;
+                }
+            });
+
+            if(camera_move){
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 18));
+            }
         }
     }
 
@@ -678,7 +721,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
                     Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
-                    drawCurrent(result);
+                    drawCurrent(result, true);
                     changeUi(true);
 
                     mPollingStatusThread = new Thread(mPollingStatusRunnable);
@@ -691,7 +734,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void drawCurrent(String result){
+    private void drawCurrent(String result, boolean cameraMove){
         String[] splited_data = Utility.dataSplitter(result);
         Log.i(TAG, "[drawCurrent] User ID: " + splited_data[0]);
         mSettingManager.writeData(SHAREPREFERENCES_FIELD_USER_ID, splited_data[0]);
@@ -734,8 +777,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String first_cane_name = first_cane.caneName;
             double first_latitude_dd = Utility.latitudeDMMtoDD(first_cane.latitudeDMM, first_cane.position_N_S);
             double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
-            drawMarkerCaneCurrent(first_cane_name, first_latitude_dd, first_longitude_dd);
-            drawMarkerCaneHistory(first_cane_name, first_latitude_dd, first_longitude_dd, true);
+            drawMarkerCaneCurrentCircle(first_cane_name, first_latitude_dd, first_longitude_dd, false);
+            drawMarkerCaneCurrentIcon(first_cane_name, first_latitude_dd, first_longitude_dd, cameraMove);
         }else{
             // Workaround: force write the uid of the first cane
             Log.i(TAG, "Workaround: force write the uid of the first cane when no GPS signal");
