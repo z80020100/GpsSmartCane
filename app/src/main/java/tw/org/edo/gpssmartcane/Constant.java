@@ -12,6 +12,8 @@ public class Constant {
     public static final int RESULT_LOGIN_FAIL = -1;
     public static final String RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL = "0000000000000000000000000000";
     public static final int RESULT_SEARCH_FAIL = -1;
+    public static final int RESULT_QUERY_STATUS_FAIL_NOT_SUPPORT_MULTI = -3;
+    public static final int RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE = -2;
     public static final int RESULT_QUERY_STATUS_FAIL = -1;
     public static final int RESULT_QUERY_STATUS_SUCCESS = 0;
 

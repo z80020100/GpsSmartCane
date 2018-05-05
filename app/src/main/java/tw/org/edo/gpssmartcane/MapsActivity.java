@@ -53,6 +53,8 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_FAIL;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_FAIL_NOT_SUPPORT_MULTI;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SEARCH_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
@@ -455,6 +457,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     changeUi(true);
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                 }
+                else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE){
+                    Utility.makeTextAndShow(mContext, "登入成功", 1);
+                    changeUi(false);
+                    Log.e(TAG, "[onCreate] No cane is bound on this account!");
+                    Utility.makeTextAndShow(mContext, "尚未綁訂拐杖", 2);
+                }
+                else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NOT_SUPPORT_MULTI){
+                    Log.e(TAG, "[onCreate] Not support multi cane yet");
+                    changeUi(false);
+                }
                 else{
                     Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 2);
                     Log.e(TAG, "[onCreate] Get cane status failed...");
@@ -760,16 +772,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mGetCurrentPositionCheck = RESULT_LOGIN_SUCCESS;
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
-                    Log.i(TAG, "Return from ACTIVITY_LOGIN: result = " + result);
-                    drawCurrent(result, true);
-                    changeUi(true);
+                    Log.i(TAG, "[ACTIVITY_LOGIN] result = " + result);
+                    String[] splited_data = Utility.dataSplitter(result);
+                    Log.i(TAG, "[ACTIVITY_LOGIN] User ID: " + splited_data[0]);
+                    mSettingManager.writeData(SHAREPREFERENCES_FIELD_USER_ID, splited_data[0]);
+                    Log.i(TAG, "[ACTIVITY_LOGIN] Cane Quantity: " + splited_data[1]);
+                    if(Integer.valueOf(splited_data[1]) == 0){
+                        Log.e(TAG, "No cane is bound on this account!");
+                        Utility.makeTextAndShow(mContext, "尚未綁訂拐杖", 2);
+                    }
+                    else{
+                        drawCurrent(result, true);
+                        changeUi(true);
 
-                    mPollingStatusThread = new Thread(mPollingStatusRunnable);
-                    mPollingStatusCtrl = true;
-                    mPollingStatusThread.start();
+                        mPollingStatusThread = new Thread(mPollingStatusRunnable);
+                        mPollingStatusCtrl = true;
+                        mPollingStatusThread.start();
+                    }
                 }
                 else{
-                    Log.e(TAG, "Return from ACTIVITY_LOGIN: resultCode = " + resultCode);
+                    Log.e(TAG, "[ACTIVITY_LOGIN] resultCode = " + resultCode);
                 }
         }
     }
@@ -821,7 +843,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             drawMarkerCaneCurrentIcon(first_cane_name, first_latitude_dd, first_longitude_dd, cameraMove);
         }else{
             // Workaround: force write the uid of the first cane
-            Log.i(TAG, "Workaround: force write the uid of the first cane when no GPS signal");
+            Log.i(TAG, "[drawCurrent] Workaround: force write the uid of the first cane when no GPS signal");
             mSettingManager.writeData(SHAREPREFERENCES_FIELD_CANE_UID, splited_data[2]);
         }
     }
@@ -960,13 +982,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGetCurrentPositionCheck = Character.getNumericValue(returnData.charAt(0));
         if(debug) Log.i(TAG, "[queryCurrentPosition] mGetCurrentPositionCheck = " + mGetCurrentPositionCheck);
         if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
-            mGetCurrentPositionData = returnData;
-            if(debug){
-                Log.i(TAG, "[queryCurrentPosition] Update mGetCurrentPositionData");
-                Log.i(TAG, "[queryCurrentPosition] Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
-                Log.i(TAG, "[queryCurrentPosition] Session ID = " + DBConnector.getSessionIdValue());
+            String[] splited_data = Utility.dataSplitter(returnData);
+            Log.i(TAG, "[queryCurrentPosition] User ID: " + splited_data[0]);
+            Log.i(TAG, "[queryCurrentPosition] Cane Quantity: " + splited_data[1]);
+            if(Integer.valueOf(splited_data[1]) == 0){
+                Log.e(TAG, "[queryCurrentPosition] No cane is bound on this account!");
+                mGetCurrentPositionData = null;
+            }else{
+                mGetCurrentPositionData = returnData;
+                if(debug){
+                    Log.i(TAG, "[queryCurrentPosition] Update mGetCurrentPositionData");
+                    Log.i(TAG, "[queryCurrentPosition] mGetCurrentPositionData = " + mGetCurrentPositionData);
+                    Log.i(TAG, "[queryCurrentPosition] Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
+                    Log.i(TAG, "[queryCurrentPosition] Session ID = " + DBConnector.getSessionIdValue());
+                }
+                mSettingManager.writeSessionData(DBConnector.getsAspSessionIdFieldName(), DBConnector.getSessionIdValue());
             }
-            mSettingManager.writeSessionData(DBConnector.getsAspSessionIdFieldName(), DBConnector.getSessionIdValue());
         }
         else{
             Log.e(TAG, "[queryCurrentPosition]mGetCurrentPositionCheck = RESULT_LOGIN_FAIL");
@@ -1016,8 +1047,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
             }
+            else if(Integer.valueOf(splitData[0]) == 0){
+                Log.e(TAG, tag + " No cane be bound on this account");
+                mQueryStatusCheck = RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE;
+            }
             else{
                 Log.e(TAG, tag + " Not support multi cane yet");
+                mQueryStatusCheck = RESULT_QUERY_STATUS_FAIL_NOT_SUPPORT_MULTI;
             }
         }
         else{
