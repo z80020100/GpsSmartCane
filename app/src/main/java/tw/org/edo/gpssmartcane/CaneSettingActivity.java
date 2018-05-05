@@ -35,13 +35,15 @@ public class CaneSettingActivity extends AppCompatActivity {
     private String mParaValue;
     private String mParaIndex;
 
-    private int[] mFreqArray = {1, 3, 5, 10, 15, 20, 30}; // minutes
-    private int[] mStepArray = {1, 3, 5, 10 ,20 ,30}; // steps
+    private int[] mFreqArray = {1, 5, 10, 20, 30, 60}; // minutes
+    private int[] mStepArray = {5, 10 ,15 ,20, 25, 30}; // steps
     private int[] mLowBatteryArray = {50, 40, 30 ,20 ,10}; // percent
 
     private SeekBar mFreqSeekBar, mStepSeekBar, mLowBatterySeekBar;
 
     private TextView mFreqCurrent, mStepCurrent, mLowBatteryCurrent;
+    private TextView mFreqMin, mStepMin, mLowBatteryMin;
+    private TextView mFreqMax, mStepMax, mLowBatteryMax;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,22 @@ public class CaneSettingActivity extends AppCompatActivity {
         mFreqCurrent = findViewById(R.id.textViewFrequencyValue);
         mStepCurrent = findViewById(R.id.textViewStepValue);
         mLowBatteryCurrent = findViewById(R.id.textViewLowBatteryValue);
+
+        mFreqMin = findViewById(R.id.textViewFrequencyMin);
+        mStepMin = findViewById(R.id.textViewStepMin);
+        mLowBatteryMin = findViewById(R.id.textViewLowBatteryMin);
+
+        mFreqMax = findViewById(R.id.textViewFrequencyMax);
+        mStepMax = findViewById(R.id.textViewStepMax);
+        mLowBatteryMax = findViewById(R.id.textViewLowBatteryMax);
+
+        mFreqMin.setText(String.valueOf(mFreqArray[0]));
+        mStepMin.setText(String.valueOf(mStepArray[0]));
+        mLowBatteryMin.setText(String.valueOf(mLowBatteryArray[mLowBatteryArray.length-1]));
+
+        mFreqMax.setText(String.valueOf(mFreqArray[mFreqArray.length-1]));
+        mStepMax.setText(String.valueOf(mStepArray[mStepArray.length-1]));
+        mLowBatteryMax.setText(String.valueOf(mLowBatteryArray[0]));
 
         mFreqSeekBar = findViewById(R.id.seekBarFrequency);
         mFreqSeekBar.setMax(mFreqArray.length-1);
