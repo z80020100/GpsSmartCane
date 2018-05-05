@@ -653,7 +653,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateStatusIcon(){
         mBatteryCapacity.bringToFront();
-        mBatteryCapacity.setText(String.valueOf(mDataStatus.batteryCapacity));
+        mBatteryCapacity.setText(String.valueOf(mDataStatus.batteryCapacity) + " ");
         if(mDataStatus.batteryCapacity <= mDataStatus.batteryAlertThreshold){
             mBatteryCapacity.setTextColor(Color.rgb(255, 0, 0));
             if(mBatteryFlash == false){
