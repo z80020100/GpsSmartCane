@@ -749,6 +749,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
             drawMarkerCaneCurrent(first_cane_name, first_latitude_dd, first_longitude_dd);
             drawMarkerCaneHistory(first_cane_name, first_latitude_dd, first_longitude_dd, true);
+        }else{
+            // Workaround: force write the uid of the first cane
+            Log.i(TAG, "Workaround: force write the uid of the first cane when no GPS signal");
+            mSettingManager.writeData(SHAREPREFERENCES_FIELD_CANE_UID, splited_data[2]);
         }
     }
 
