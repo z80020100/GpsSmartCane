@@ -881,7 +881,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String url = URL_QUERY_STATUS;
         ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(NAME_QUERY_STATUS_USER_ID, SettingManager.sUserId));
-        String returnData = DBConnector.executeQuery(params, url, SettingManager.sSessionIdFieldName, SettingManager.sSessionId);
+        String sessionData[] = mSettingManager.readSessionData();
+        if(sessionData == null){
+            Log.e(TAG, "sessionData is null!");
+        }
+        String returnData = DBConnector.executeQuery(params, url, sessionData[0], sessionData[1]);
         int queryStatusResult = Character.getNumericValue(returnData.charAt(0));
         if(debug) Log.i(TAG, tag + " queryStatusResult = " + queryStatusResult);
         if(queryStatusResult != RESULT_QUERY_STATUS_FAIL){

@@ -175,7 +175,11 @@ public class CaneSettingActivity extends AppCompatActivity {
                     params.add(new BasicNameValuePair(NAME_EDIT_PARAMETERS_USER_ID, SettingManager.sUserId));
                     params.add(new BasicNameValuePair(NAME_EDIT_PARAMETERS_CANE_UID, SettingManager.sCaneId));
                     params.add(new BasicNameValuePair(mParaNames, mParaValue));
-                    String return_data = DBConnector.executeQuery(params, url, SettingManager.sSessionIdFieldName, SettingManager.sSessionId);
+                    String sessionData[] = mSettingManager.readSessionData();
+                    if(sessionData == null){
+                        Log.e(TAG, "sessionData is null!");
+                    }
+                    String return_data = DBConnector.executeQuery(params, url, sessionData[0], sessionData[1]);
                     Log.i(TAG, "return_data = " + return_data);
                     final int settingResult = Character.getNumericValue(return_data.charAt(0));
                     Log.i(TAG, "settingResult = " + settingResult);

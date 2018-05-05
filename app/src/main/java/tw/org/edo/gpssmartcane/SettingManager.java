@@ -32,8 +32,8 @@ public class SettingManager {
 
     public static String sEmaill;
     public static String sPassword;
-    public static String sSessionIdFieldName;
-    public static String sSessionId;
+    private static String mSessionIdFieldName;
+    private static String mSessionId;
     public static String sUserId;
     public static String sCaneId;
     public static String sFreqIndex;
@@ -55,8 +55,8 @@ public class SettingManager {
         synchronized (mLocker){
             sEmaill = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_EMAIL, "");
             sPassword = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_PASSWORD, "");
-            sSessionIdFieldName = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME, "");
-            sSessionId = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, "");
+            mSessionIdFieldName = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME, "");
+            mSessionId = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, "");
             sUserId = mSettings.getString(SHAREPREFERENCES_FIELD_USER_ID, "");
             sCaneId = mSettings.getString(SHAREPREFERENCES_FIELD_CANE_UID, "");
             sFreqIndex = mSettings.getString(SHAREPREFERENCES_FIELD_FREQ_INDEX, "0");
@@ -65,8 +65,8 @@ public class SettingManager {
 
             Log.i(TAG, "[readData]Email: " + sEmaill);
             Log.i(TAG, "[readData]PWD: " + sPassword);
-            Log.i(TAG, "[readData]Session ID Field Name: " + sSessionIdFieldName);
-            Log.i(TAG, "[readData]Session ID: " + sSessionId);
+            Log.i(TAG, "[readData]Session ID Field Name: " + mSessionIdFieldName);
+            Log.i(TAG, "[readData]Session ID: " + mSessionId);
             Log.i(TAG, "[readData]User ID: " + sUserId);
             Log.i(TAG, "[readData]Cane UID: " + sCaneId);
             Log.i(TAG, "[readData]Frequency Index: " + sFreqIndex);
@@ -77,8 +77,8 @@ public class SettingManager {
 
     public int checkData(){
         synchronized (mLocker){
-            if(sSessionId.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
-            else if(sSessionIdFieldName.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
+            if(mSessionId.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
+            else if(mSessionIdFieldName.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
             else if(sEmaill.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
             else if(sPassword.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
             else if(sUserId.equals("")) return SHAREPREFERENCES_CHECK_FAIL;
@@ -121,6 +121,15 @@ public class SettingManager {
             } else {
                 return SHAREPREFERENCES_WRITE_FAIL;
             }
+        }
+    }
+
+    public String[] readSessionData(){
+        synchronized (mLocker){
+            String[] sessionData = new String[2];
+            sessionData[0] = mSessionIdFieldName;
+            sessionData[1] = mSessionId;
+            return sessionData;
         }
     }
 }
