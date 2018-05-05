@@ -41,12 +41,14 @@ import java.util.List;
 
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_SETTING;
+import static tw.org.edo.gpssmartcane.Constant.NAME_CLEAR_EMERGENCY_UID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_EMAIL;
 import static tw.org.edo.gpssmartcane.Constant.NAME_LOGIN_PASSWORD;
 import static tw.org.edo.gpssmartcane.Constant.NAME_QUERY_STATUS_USER_ID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_END_RANGE;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_START_RANGE;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_CLEAR_EMERGENCY_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL;
@@ -57,6 +59,7 @@ import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_CHECK_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_USER_ID;
+import static tw.org.edo.gpssmartcane.Constant.URL_CLEAR_EMERGENCY;
 import static tw.org.edo.gpssmartcane.Constant.URL_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.URL_QUERY_STATUS;
 import static tw.org.edo.gpssmartcane.Constant.URL_SEARCH_HISTORY;
@@ -121,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View.OnClickListener mHistoryImageViewListener;
     private View.OnClickListener mSettingImageViewListener;
     private View.OnClickListener mCaneImageViewViewListener;
+    private View.OnClickListener mEmergencyImageViewListener;
 
     int mNowYear;
     int mNowMonth;
@@ -211,7 +215,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         mBatteryImageView.setOnClickListener(mBlankViewListener);
         mLightImageView.setOnClickListener(mBlankViewListener);
-        mEmergencyImageView.setOnClickListener(mBlankViewListener);
         mHistoryImageView.setOnClickListener(mBlankViewListener);
 
         mHistoryImageViewListener = new View.OnClickListener() {
@@ -262,6 +265,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         mCaneImageView.setOnClickListener(mCaneImageViewViewListener);
+
+        mEmergencyImageViewListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mDataStatus.emergencyNotice == true){
+                            clearEmergency();
+                        }
+                        else{
+                         runOnUiThread(new Runnable() {
+                             @Override
+                             public void run() {
+                                 Utility.makeTextAndShow(mContext, "緊急按鈕未被觸發，無須清除", 1);
+                             }
+                         });
+                        }
+                    }
+                }).start();
+            }
+        };
+        mEmergencyImageView.setOnClickListener(mEmergencyImageViewListener);
 
         mStartDateTextView = findViewById(R.id.start_date);
         mStartDateTextViewListener = new View.OnClickListener() {
@@ -993,6 +1019,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG, "[queryStatusData]queryStatusResult = RESULT_QUERY_STATUS_FAIL");
             Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 1);
         }
+    }
+
+    private void clearEmergency(){
+        String url = URL_CLEAR_EMERGENCY;
+        ArrayList<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(NAME_CLEAR_EMERGENCY_UID, SettingManager.sCaneId));
+        String sessionData[] = mSettingManager.readSessionData();
+        if(sessionData == null){
+            Log.e(TAG, "sessionData is null!");
+        }
+        String returnData = DBConnector.executeQuery(params, url, sessionData[0], sessionData[1]);
+        int clearEmergencyResult = Character.getNumericValue(returnData.charAt(0));
+        if(clearEmergencyResult == RESULT_CLEAR_EMERGENCY_SUCCESS){
+            Log.e(TAG, "[clearEmergency]Clear emergency status success");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utility.makeTextAndShow(mContext, "清除緊急狀態成功", 2);
+                }
+            });
+        }
+        else{
+            Log.i(TAG, "[clearEmergency]clearEmergencyResult = " + clearEmergencyResult);
+            Log.i(TAG, "[clearEmergency]returnData = " + returnData);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utility.makeTextAndShow(mContext, "錯誤：清除緊急狀態失敗", 2);
+                }
+            });
+        }
+
     }
 
     private void initialBatteryFlashAnimation(){
