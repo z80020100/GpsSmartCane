@@ -425,46 +425,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mSettingManager = new SettingManager(mContext);
         if(mSettingManager.checkData() == SHAREPREFERENCES_CHECK_FAIL){
-            Log.e(TAG, "[CurrentPosition] No login information!");
+            Log.e(TAG, "[onCreate] No login information!");
             changeUi(false);
         }
         else{
-            Log.i(TAG, "[CurrentPosition] Detect login information");
-            Log.i(TAG, "[CurrentPosition] Try to get cane status...");
-            mQueryStatusThread = new Thread(mQueryStatusRunnable);
-            mQueryStatusThread.start();
+            Log.i(TAG, "[onCreate] Detect login information");
+            Log.i(TAG, "[onCreate] Try to login...");
+            Utility.makeTextAndShow(mContext, "自動登入中…", 1);
+            mGetCurrentPositionThread = new Thread(mGetCurrentPositionRunnable);
+            mGetCurrentPositionThread.start();
             try {
-                mQueryStatusThread.join();
+                mGetCurrentPositionThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
+                Log.i(TAG, "[onCreate] Get current position success");
 
-            if(mQueryStatusCheck == RESULT_QUERY_STATUS_SUCCESS){
-                Utility.makeTextAndShow(mContext, "自動登入中...", 2);
-
-                mGetCurrentPositionThread = new Thread(mGetCurrentPositionRunnable);
-                mGetCurrentPositionThread.start();
+                mQueryStatusThread = new Thread(mQueryStatusRunnable);
+                mQueryStatusThread.start();
                 try {
-                    mGetCurrentPositionThread.join();
+                    mQueryStatusThread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
-                    Log.i(TAG, "[CurrentPosition] Get current position success");
+                if(mQueryStatusCheck == RESULT_QUERY_STATUS_SUCCESS){
+                    Log.i(TAG, "[onCreate] Get cane status success for the first time");
                     changeUi(true);
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                 }
                 else{
-                    Log.e(TAG, "[CurrentPosition] Get current position failed...");
+                    Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 2);
+                    Log.e(TAG, "[onCreate] Get cane status failed...");
                     changeUi(false);
-                    Utility.makeTextAndShow(mContext, "錯誤：登入失敗，請嘗試手動登入", 2);
                 }
             }
             else{
-                Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 2);
-                Log.e(TAG, "Get cane status failed...");
+                Log.e(TAG, "[onCreate] Get current position failed...");
                 changeUi(false);
+                Utility.makeTextAndShow(mContext, "錯誤：登入失敗，請嘗試手動登入", 2);
             }
         }
 
@@ -970,7 +970,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{
             Log.e(TAG, "[queryCurrentPosition]mGetCurrentPositionCheck = RESULT_LOGIN_FAIL");
-            Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖現在位置", 1);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖現在位置", 1);
+                }
+            });
             mGetCurrentPositionData = null;
         }
     }
@@ -1017,7 +1022,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{
             Log.e(TAG, "[queryStatusData]queryStatusResult = RESULT_QUERY_STATUS_FAIL");
-            Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 1);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 1);
+                }
+            });
         }
     }
 
