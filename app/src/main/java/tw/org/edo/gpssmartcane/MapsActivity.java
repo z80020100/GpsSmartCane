@@ -361,6 +361,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if(mPollingStatusCtrl){
                         if(mPollingThreadDebug)  Log.i(TAG, "[Polling] pollingCnt = " + pollingCnt);
                         queryStatusData("[Polling]", mPollingThreadDebug);
+                        queryCurrentPosition(false);
                     }
                     else{
                         if(mPollingThreadDebug)  Log.i(TAG, "[Polling] Pause polling");
@@ -379,23 +380,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGetCurrentPositionRunnable = new Runnable() {
             @Override
             public void run() {
-                String url = URL_LOGIN;
-                ArrayList<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair(NAME_LOGIN_EMAIL, SettingManager.sEmaill));
-                params.add(new BasicNameValuePair(NAME_LOGIN_PASSWORD, SettingManager.sPassword));
-                String returnData = DBConnector.executeQuery(params, url);
-                mGetCurrentPositionCheck = Character.getNumericValue(returnData.charAt(0));
-                Log.i(TAG, "[CurrentPosition] mGetCurrentPositionCheck = " + mGetCurrentPositionCheck);
-                if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
-                    mGetCurrentPositionData = returnData;
-                    Log.i(TAG, "[CurrentPosition] Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
-                    Log.i(TAG, "[CurrentPosition] Session ID = " + DBConnector.getSessionIdValue());
-                    mSettingManager.writeSessionData(DBConnector.getsAspSessionIdFieldName(), DBConnector.getSessionIdValue());
-                }
-                else{
-                    mGetCurrentPositionData = null;
-                }
-
+                queryCurrentPosition(true);
             }
         };
 
@@ -467,6 +452,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG, "onMapReady");
         mGoogleMap = googleMap;
+        mGoogleMap.clear();
+
         if(mGetCurrentPositionData != null){
             drawCurrent(mGetCurrentPositionData);
 
@@ -878,6 +865,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCaneImageView.setVisibility(View.GONE);
             mEmergencyImageView.setVisibility(View.GONE);
             mHistoryImageView.setVisibility(View.GONE);
+        }
+    }
+
+    private void queryCurrentPosition(boolean debug){
+        String url = URL_LOGIN;
+        ArrayList<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(NAME_LOGIN_EMAIL, SettingManager.sEmaill));
+        params.add(new BasicNameValuePair(NAME_LOGIN_PASSWORD, SettingManager.sPassword));
+        String returnData = DBConnector.executeQuery(params, url);
+        mGetCurrentPositionCheck = Character.getNumericValue(returnData.charAt(0));
+        if(debug) Log.i(TAG, "[queryCurrentPosition] mGetCurrentPositionCheck = " + mGetCurrentPositionCheck);
+        if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
+            mGetCurrentPositionData = returnData;
+            if(debug){
+                Log.i(TAG, "[queryCurrentPosition] Update mGetCurrentPositionData");
+                Log.i(TAG, "[queryCurrentPosition] Session ID Field Name = " + DBConnector.getsAspSessionIdFieldName());
+                Log.i(TAG, "[queryCurrentPosition] Session ID = " + DBConnector.getSessionIdValue());
+            }
+            mSettingManager.writeSessionData(DBConnector.getsAspSessionIdFieldName(), DBConnector.getSessionIdValue());
+        }
+        else{
+            Log.e(TAG, "[queryCurrentPosition]mGetCurrentPositionCheck = RESULT_LOGIN_FAIL");
+            mGetCurrentPositionData = null;
         }
     }
 
