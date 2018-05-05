@@ -30,7 +30,7 @@ public class DBConnector {
     private static String sAspSessionIdValue;
     private static String sAspSessionIdFieldName;
 
-    public static String executeQuery(ArrayList<NameValuePair> params, String uri, String sessionIdFieldName, String sessionIdValue) {
+    public static synchronized String executeQuery(ArrayList<NameValuePair> params, String uri, String sessionIdFieldName, String sessionIdValue) {
         //Log.i(TAG, "executeQuery start");
         String result;
 
@@ -58,12 +58,19 @@ public class DBConnector {
         }
         cookieStore = httpClient.getCookieStore();
         List<Cookie> cookies = cookieStore.getCookies();
+        //Log.i(TAG, "cookies.size() = " + cookies.size());
 
         for(int i = 0;i < cookies.size(); i++){
             if(cookies.get(i).getName().contains(COOKIE_ASP_SESSION_ID_NAME_PREFIX)){
                 Log.i(TAG, cookies.get(i).getName() + ": " + cookies.get(i).getValue());
-                sAspSessionIdFieldName = cookies.get(i).getName();
-                sAspSessionIdValue = cookies.get(i).getValue();
+                if(sessionIdFieldName == null || sessionIdValue == null){
+                    Log.i(TAG, "Store ASP session data");
+                    sAspSessionIdFieldName = cookies.get(i).getName();
+                    sAspSessionIdValue = cookies.get(i).getValue();
+                }
+                else{
+                    Log.i(TAG, "Ignore ASP session data");
+                }
             }
             else{
                 Log.i(TAG, "Others -> " + cookies.get(i).getName() + ": " + cookies.get(i).getValue());
