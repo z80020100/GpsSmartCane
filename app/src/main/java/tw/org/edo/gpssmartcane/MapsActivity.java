@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_BINDING;
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_SETTING;
 import static tw.org.edo.gpssmartcane.Constant.NAME_CLEAR_EMERGENCY_UID;
@@ -458,10 +459,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Utility.makeTextAndShow(mContext, "登入成功", 2);
                 }
                 else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE){
-                    Utility.makeTextAndShow(mContext, "登入成功", 1);
                     changeUi(false);
                     Log.e(TAG, "[onCreate] No cane is bound on this account!");
-                    Utility.makeTextAndShow(mContext, "尚未綁訂拐杖", 2);
+                    Utility.makeTextAndShow(mContext, "尚未綁定手杖", 2);
+                    Intent intent = new Intent(mContext, BindingActivity.class);
+                    startActivityForResult(intent, ACTIVITY_BINDING);
                 }
                 else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NOT_SUPPORT_MULTI){
                     Log.e(TAG, "[onCreate] Not support multi cane yet");
@@ -770,7 +772,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i(TAG, "Back from ACTIVITY_LOGIN");
                 if(resultCode == RESULT_LOGIN_SUCCESS){
                     mGetCurrentPositionCheck = RESULT_LOGIN_SUCCESS;
-                    Utility.makeTextAndShow(mContext, "登入成功", 2);
                     String result = data.getExtras().getString(RETURN_VALUE_LOGIN);
                     Log.i(TAG, "[ACTIVITY_LOGIN] result = " + result);
                     String[] splited_data = Utility.dataSplitter(result);
@@ -779,9 +780,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.i(TAG, "[ACTIVITY_LOGIN] Cane Quantity: " + splited_data[1]);
                     if(Integer.valueOf(splited_data[1]) == 0){
                         Log.e(TAG, "No cane is bound on this account!");
-                        Utility.makeTextAndShow(mContext, "尚未綁訂拐杖", 2);
+                        Utility.makeTextAndShow(mContext, "開始綁定手杖", 2);
+                        Intent intent = new Intent(mContext, BindingActivity.class);
+                        startActivityForResult(intent, ACTIVITY_BINDING);
                     }
                     else{
+                        Utility.makeTextAndShow(mContext, "登入成功", 2);
                         drawCurrent(result, true);
                         changeUi(true);
 

@@ -7,6 +7,7 @@ package tw.org.edo.gpssmartcane;
 public class Constant {
     public static final int ACTIVITY_LOGIN = 0;
     public static final int ACTIVITY_SETTING = 1;
+    public static final int ACTIVITY_BINDING = 2;
 
     public static final int RESULT_LOGIN_SUCCESS = 0;
     public static final int RESULT_LOGIN_FAIL = -1;
@@ -16,6 +17,10 @@ public class Constant {
     public static final int RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE = -2;
     public static final int RESULT_QUERY_STATUS_FAIL = -1;
     public static final int RESULT_QUERY_STATUS_SUCCESS = 0;
+    public static final int RESULT_BINDING_WAIT_CONFIRM_CODE = 2;
+    public static final int RESULT_BINDING_OK = 1;
+    public static final int RESULT_BINDING_FAIL = -1;
+    public static final int RESULT_BINDING_WAIT_CONFIRM_CODE_ERROR = -3;
 
     public static final int RESULT_SETTING_SUCCESS = 1;
     public static final int RESULT_SETTING_FAIL = -1;
@@ -30,6 +35,8 @@ public class Constant {
     public static final String URL_QUERY_STATUS = "http://edo.org.tw/cane/cane_qry.asp";
     public static final String URL_EDIT_PARAMETERS = "http://edo.org.tw/cane/cane_edit.asp";
     public static final String URL_CLEAR_EMERGENCY = "http://edo.org.tw/cane/cane_emerg_off.asp";
+    public static final String URL_BINDING_CANE = "http://edo.org.tw/cane/cane_add.asp";
+    public static final String URL_BINDING_CANE_CHECK = "http://edo.org.tw/cane/confirm_chk.asp";
 
     public static final String NAME_LOGIN_EMAIL = "email";
     public static final String NAME_LOGIN_PASSWORD = "pwd";
@@ -46,6 +53,14 @@ public class Constant {
     public static final String NAME_EDIT_PARAMETERS_SET_STEP = "set_count";
     public static final String NAME_EDIT_PARAMETERS_EMERGY_CALL = "emergy_call";
     public static final String NAME_EDIT_PARAMETERS_EMERGY_MAIL = "emergy_mail";
+
+    public static final String NAME_BIND_CANE_UID = "uid";
+    public static final String NAME_BIND_CANE_EMERGY_CALL = "emerg_call";
+    public static final String NAME_BIND_CANE_EMERGY_MAIL = "emerg_mail";
+
+    public static final String NAME_BIND_CANE_CONFIRM_UID = "uid";
+    public static final String NAME_BIND_CANE_CONFIRM_USER_ID = "id";
+    public static final String NAME_BIND_CANE_CONFIRM_CODE = "rnd_code";
 
     public static final String NAME_CLEAR_EMERGENCY_UID = "uid";
 
