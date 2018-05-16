@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tw.org.edo.gpssmartcane.AddCaneActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="智慧手杖監控"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewEnglishTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Smart Cane Watch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+
+    <TextView
+        android:id="@+id/textViewSubTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="*新增監控手杖"
+        android:textColor="@color/colorSubTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEnglishTitle" />
+
+    <TextView
+        android:id="@+id/textViewPhoneTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="手杖號碼："
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
+
+    <TextView
+        android:id="@+id/textViewPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="0912345678"
+        app:layout_constraintStart_toEndOf="@+id/textViewPhoneTitle"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
+
+    <TextView
+        android:id="@+id/textViewCaneUid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="手杖序號"
+        app:layout_constraintStart_toStartOf="@+id/textViewPhoneTitle"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPhoneTitle" />
+
+    <TextView
+        android:id="@+id/textViewConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="認證碼"
+        app:layout_constraintStart_toStartOf="@+id/editTextPhone"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPhone" />
+
+    <TextView
+        android:id="@+id/textViewPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="手機號碼"
+        app:layout_constraintStart_toStartOf="@+id/editTextCaneUid"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCaneUid" />
+
+    <EditText
+        android:id="@+id/editTextPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text|number"
+        app:layout_constraintStart_toStartOf="@+id/textViewPhone"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPhone" />
+
+    <EditText
+        android:id="@+id/editTextCaneUid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        app:layout_constraintStart_toStartOf="@+id/textViewCaneUid"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCaneUid" />
+
+    <EditText
+        android:id="@+id/editTextConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text|number"
+        app:layout_constraintStart_toStartOf="@+id/textViewConfirm"
+        app:layout_constraintTop_toBottomOf="@+id/textViewConfirm" />
+
+    <Button
+        android:id="@+id/buttonBinding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="綁定"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTextConfirm"
+        app:layout_constraintTop_toTopOf="@+id/editTextConfirm" />
+
+    <Button
+        android:id="@+id/buttonAddCane"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="新增"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTextCaneUid"
+        app:layout_constraintTop_toTopOf="@+id/editTextCaneUid" />
+
+    <TextView
+        android:id="@+id/textViewCaneList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="登入手杖列表"
+        app:layout_constraintStart_toStartOf="@+id/editTextConfirm"
+        app:layout_constraintTop_toBottomOf="@+id/editTextConfirm" />
+
+    <ListView
+        android:id="@+id/listViewCaneList"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCaneList" />
+
+</android.support.constraint.ConstraintLayout>

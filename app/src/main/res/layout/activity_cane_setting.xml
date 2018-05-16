@@ -231,4 +231,24 @@
         app:layout_constraintStart_toEndOf="@+id/textViewFrequencyMin"
         app:layout_constraintTop_toBottomOf="@+id/textViewLowBattery" />
 
+    <TextView
+        android:id="@+id/textViewAddCane"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="160dp"
+        android:layout_marginStart="8dp"
+        android:text="新增監控手杖"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textViewLowBatteryMax" />
+
+    <TextView
+        android:id="@+id/textViewNotifySetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:text="通知訊息設定"
+        app:layout_constraintStart_toStartOf="@+id/textViewLowBatteryMax"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAddCane" />
+
 </android.support.constraint.ConstraintLayout>

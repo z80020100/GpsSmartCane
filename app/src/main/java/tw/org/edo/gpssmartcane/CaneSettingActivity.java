@@ -1,9 +1,11 @@
 package tw.org.edo.gpssmartcane;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -12,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 
+import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_ADD_CANE;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_FREQ;
@@ -44,6 +47,9 @@ public class CaneSettingActivity extends AppCompatActivity {
     private TextView mFreqCurrent, mStepCurrent, mLowBatteryCurrent;
     private TextView mFreqMin, mStepMin, mLowBatteryMin;
     private TextView mFreqMax, mStepMax, mLowBatteryMax;
+
+    private TextView mAddCaneTextView;
+    private TextView mNotifySettingTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +226,15 @@ public class CaneSettingActivity extends AppCompatActivity {
                 }
             }
         };
+
+        mAddCaneTextView = findViewById(R.id.textViewAddCane);
+        mAddCaneTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, AddCaneActivity.class);
+                startActivityForResult(intent, ACTIVITY_ADD_CANE);
+            }
+        });
     }
 
     private void setFreqCurrent(int index){

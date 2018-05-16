@@ -8,6 +8,7 @@ public class Constant {
     public static final int ACTIVITY_LOGIN = 0;
     public static final int ACTIVITY_SETTING = 1;
     public static final int ACTIVITY_BINDING = 2;
+    public static final int ACTIVITY_ADD_CANE = 3;
 
     public static final int RESULT_LOGIN_SUCCESS = 0;
     public static final int RESULT_LOGIN_FAIL = -1;
