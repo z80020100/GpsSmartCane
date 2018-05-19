@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
@@ -47,6 +49,12 @@ public class CaneSettingActivity extends AppCompatActivity {
     private TextView mFreqCurrent, mStepCurrent, mLowBatteryCurrent;
     private TextView mFreqMin, mStepMin, mLowBatteryMin;
     private TextView mFreqMax, mStepMax, mLowBatteryMax;
+
+    private Spinner mPhoneListSpinner;
+    private String mPhoneList[] = {"0955031053", "0912345678"};
+
+    private Spinner mMailListSpinner;
+    private String mMailList[] = {"z800201002005@gmail.com", "test1@gmail.com"};
 
     private TextView mAddCaneTextView;
     private TextView mNotifySettingTextView;
@@ -235,6 +243,18 @@ public class CaneSettingActivity extends AppCompatActivity {
                 startActivityForResult(intent, ACTIVITY_ADD_CANE);
             }
         });
+
+        mPhoneListSpinner = findViewById(R.id.spinnerPhoneList);
+        ArrayAdapter<String> phoneList = new ArrayAdapter<>(mContext,
+                android.R.layout.simple_spinner_dropdown_item,
+                mPhoneList);
+        mPhoneListSpinner.setAdapter(phoneList);
+
+        mMailListSpinner = findViewById(R.id.spinnerMailList);
+        ArrayAdapter<String> mailList = new ArrayAdapter<>(mContext,
+                android.R.layout.simple_spinner_dropdown_item,
+                mMailList);
+        mMailListSpinner.setAdapter(mailList);
     }
 
     private void setFreqCurrent(int index){

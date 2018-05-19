@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="tw.org.edo.gpssmartcane.CaneSettingActivity">
+
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
@@ -43,17 +44,40 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewEnglishTitle" />
 
     <TextView
+        android:id="@+id/textViewＣaneName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="手杖名稱"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
+
+    <EditText
+        android:id="@+id/editTextCaneName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/textViewＣaneName"
+        app:layout_constraintTop_toBottomOf="@+id/textViewＣaneName" />
+
+    <TextView
         android:id="@+id/textViewFrequency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:text="定位傳送頻率"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewＣaneName" />
 
     <TextView
         android:id="@+id/textViewFrequencyValue"
@@ -61,12 +85,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:text="(10 min.)"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textViewFrequency"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSubTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewＣaneName" />
 
     <TextView
         android:id="@+id/textViewFrequencyMin"
@@ -232,23 +256,100 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewLowBattery" />
 
     <TextView
+        android:id="@+id/textViewPhoneList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:text="電話號碼列表"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLowBattery" />
+
+    <Spinner
+        android:id="@+id/spinnerPhoneList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/textViewPhoneList"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPhoneList" />
+
+    <TextView
+        android:id="@+id/textViewAddPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="新增電話"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textViewPhoneList"
+        app:layout_constraintTop_toTopOf="@+id/textViewPhoneList" />
+
+    <TextView
+        android:id="@+id/textViewMailList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:text="電子郵件列表"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPhoneList" />
+
+    <Spinner
+        android:id="@+id/spinnerMailList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/textViewMailList"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMailList" />
+
+    <TextView
+        android:id="@+id/textViewAddMail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="新增電子郵件"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textViewMailList"
+        app:layout_constraintTop_toTopOf="@+id/textViewMailList" />
+
+
+    <TextView
         android:id="@+id/textViewAddCane"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="160dp"
+        android:layout_marginBottom="48dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:text="新增監控手杖"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textViewLowBatteryMax" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewNotifySetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="通知訊息設定"
-        app:layout_constraintStart_toStartOf="@+id/textViewLowBatteryMax"
+        app:layout_constraintStart_toStartOf="@+id/textViewAddCane"
         app:layout_constraintTop_toBottomOf="@+id/textViewAddCane" />
+
+    <TextView
+        android:id="@+id/textViewLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="登出"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/textViewNotifySetting"
+        app:layout_constraintTop_toTopOf="@+id/textViewNotifySetting" />
 
 </android.support.constraint.ConstraintLayout>
