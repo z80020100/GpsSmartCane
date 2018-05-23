@@ -113,6 +113,7 @@ public class SettingManager {
                 value = sessionId;
                 mEditor.putString(fieldName, value);
                 mEditor.commit();
+                updateSessionData();
 
                 Log.i(TAG, "[writeSessionData]Update ASP session field name");
                 Log.i(TAG, "[writeSessionData]Update ASP session value");
@@ -131,5 +132,10 @@ public class SettingManager {
             sessionData[1] = mSessionId;
             return sessionData;
         }
+    }
+
+    private void updateSessionData(){
+        mSessionIdFieldName = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME, "");
+        mSessionId = mSettings.getString(SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID, "");
     }
 }
