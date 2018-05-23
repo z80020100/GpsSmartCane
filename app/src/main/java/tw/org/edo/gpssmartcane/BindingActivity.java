@@ -128,14 +128,14 @@ public class BindingActivity extends AppCompatActivity {
 
                 if(mConfirm.length() > 0){
                     Log.i(TAG, "[onClick-confirm] mConfirm = " + mConfirm);
-                    Log.i(TAG, "[onClick-confirm] SettingManager.sUserId = " + SettingManager.sUserId + ", SettingManager.sCaneId = " + SettingManager.sCaneId);
+                    Log.i(TAG, "[onClick-confirm] SettingManager.sUserId = " + SettingManager.sUserId);
                     mHttpRunnable = new Runnable() {
                         @Override
                         public void run() {
                             String url = URL_BINDING_CANE_CHECK;
                             ArrayList<NameValuePair> params = new ArrayList<>();
-                            params.add(new BasicNameValuePair(NAME_BIND_CANE_CONFIRM_UID, SettingManager.sCaneId));
-                            params.add(new BasicNameValuePair(NAME_BIND_CANE_CONFIRM_USER_ID, SettingManager.sUserId));
+                            params.add(new BasicNameValuePair(NAME_BIND_CANE_CONFIRM_UID, mCaneUid));
+                            //params.add(new BasicNameValuePair(NAME_BIND_CANE_CONFIRM_USER_ID, SettingManager.sUserId));
                             params.add(new BasicNameValuePair(NAME_BIND_CANE_CONFIRM_CODE, mConfirm));
                             String sessionData[] = mSettingManager.readSessionData();
                             if(sessionData == null){
@@ -177,7 +177,7 @@ public class BindingActivity extends AppCompatActivity {
         };
 
         mCaneUidEditText.setText("A001");
-        mPhoneEditText.setText("0912345678");
+        mPhoneEditText.setText("0955031053");
 
         mConfirmTextView.setVisibility(View.GONE);
         mConfirmEditText.setVisibility(View.GONE);
