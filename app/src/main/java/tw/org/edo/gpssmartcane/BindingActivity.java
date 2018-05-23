@@ -161,6 +161,7 @@ public class BindingActivity extends AppCompatActivity {
                         else if(mBindResult == RESULT_BINDING_OK){
                             Log.i(TAG, "[onClick-binding] mBindResult == RESULT_BINDING_OK");
                             Utility.makeTextAndShow(mContext, "綁定成功", 2);
+                            setResult(mBindResult);
                             finish();
                         }
                         else{

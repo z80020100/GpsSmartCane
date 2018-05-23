@@ -49,6 +49,8 @@ import static tw.org.edo.gpssmartcane.Constant.NAME_QUERY_STATUS_USER_ID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_END_RANGE;
 import static tw.org.edo.gpssmartcane.Constant.NAME_SEARCH_HISTORY_START_RANGE;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_BINDING_OK;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_BINDING_WAIT_CONFIRM_CODE;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_CLEAR_EMERGENCY_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_LOGIN_SUCCESS;
@@ -797,6 +799,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else{
                     Log.e(TAG, "[ACTIVITY_LOGIN] resultCode = " + resultCode);
                 }
+                break;
+            case ACTIVITY_BINDING:
+                Log.i(TAG, "Back from ACTIVITY_BINDING");
+                if(resultCode == RESULT_BINDING_OK){
+                    Log.i(TAG, "RESULT_BINDING_OK");
+
+                    Utility.makeTextAndShow(mContext, "自動登入中…", 1);
+                    mGetCurrentPositionThread = new Thread(mGetCurrentPositionRunnable);
+                    mGetCurrentPositionThread.start();
+                    try {
+                        mGetCurrentPositionThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if(mGetCurrentPositionCheck != RESULT_LOGIN_FAIL){
+                        Log.i(TAG, "[ACTIVITY_BINDING] Get current position success");
+
+                        mQueryStatusThread = new Thread(mQueryStatusRunnable);
+                        mQueryStatusThread.start();
+                        try {
+                            mQueryStatusThread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        if(mQueryStatusCheck == RESULT_QUERY_STATUS_SUCCESS){
+                            Log.i(TAG, "[ACTIVITY_BINDING] Get cane status success for the first time");
+                            changeUi(true);
+                            Utility.makeTextAndShow(mContext, "登入成功", 2);
+                        }
+                        else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE){
+                            changeUi(false);
+                            Log.e(TAG, "[ACTIVITY_BINDING] No cane is bound on this account!");
+                            Utility.makeTextAndShow(mContext, "尚未綁定手杖", 2);
+                            Intent intent = new Intent(mContext, BindingActivity.class);
+                            startActivityForResult(intent, ACTIVITY_BINDING);
+                        }
+                        else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NOT_SUPPORT_MULTI){
+                            Log.e(TAG, "[ACTIVITY_BINDING] Not support multi cane yet");
+                            changeUi(false);
+                        }
+                        else{
+                            Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖狀態", 2);
+                            Log.e(TAG, "[ACTIVITY_BINDING] Get cane status failed...");
+                            changeUi(false);
+                        }
+                    }
+                    else{
+                        Log.e(TAG, "[ACTIVITY_BINDING] Get current position failed...");
+                        changeUi(false);
+                        Utility.makeTextAndShow(mContext, "錯誤：登入失敗，請嘗試手動登入", 2);
+                    }
+                }
+                break;
+            default:
+                Log.i(TAG, "Back from Unknown Activity: requestCode = " + requestCode);
         }
     }
 
