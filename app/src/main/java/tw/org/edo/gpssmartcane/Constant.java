@@ -9,6 +9,7 @@ public class Constant {
     public static final int ACTIVITY_SETTING = 1;
     public static final int ACTIVITY_BINDING = 2;
     public static final int ACTIVITY_ADD_CANE = 3;
+    public static final int ACTIVITY_REGISTER = 4;
 
     public static final int RESULT_LOGIN_SUCCESS = 0;
     public static final int RESULT_LOGIN_FAIL = -1;
@@ -33,6 +34,8 @@ public class Constant {
     public static final int RESULT_CLEAR_EMERGENCY_SUCCESS = 1;
 
     public static final String RETURN_VALUE_LOGIN = "return_value_login";
+    public static final String RETURN_VALUE_REGISTER_EMAIL = "return_value_register_email";
+    public static final String RETURN_VALUE_REGISTER_PASSWORD = "return_value_register_password";
 
     public static final String URL_LOGIN = "http://edo.org.tw/cane/gmap.asp";
     public static final String URL_REGISTER = "http://edo.org.tw/cane/reg_add.asp";
