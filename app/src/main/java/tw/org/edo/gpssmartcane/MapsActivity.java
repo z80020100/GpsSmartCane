@@ -828,6 +828,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Log.i(TAG, "[ACTIVITY_BINDING] Get cane status success for the first time");
                             changeUi(true);
                             Utility.makeTextAndShow(mContext, "登入成功", 2);
+
+                            mPollingStatusThread = new Thread(mPollingStatusRunnable);
+                            mPollingStatusCtrl = true;
+                            mPollingStatusThread.start();
                         }
                         else if(mQueryStatusCheck == RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE){
                             changeUi(false);
