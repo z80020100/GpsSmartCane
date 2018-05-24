@@ -36,6 +36,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -63,11 +64,17 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_SEARCH_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_CHECK_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_UID;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_STEP_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_USER_ID;
 import static tw.org.edo.gpssmartcane.Constant.URL_CLEAR_EMERGENCY;
 import static tw.org.edo.gpssmartcane.Constant.URL_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.URL_QUERY_STATUS;
 import static tw.org.edo.gpssmartcane.Constant.URL_SEARCH_HISTORY;
+import static tw.org.edo.gpssmartcane.Constant.sFreqArray;
+import static tw.org.edo.gpssmartcane.Constant.sLowBatteryArray;
+import static tw.org.edo.gpssmartcane.Constant.sStepArray;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     final private  String TAG = this.getClass().getSimpleName();
@@ -1105,6 +1112,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         splitData[8], splitData[9], splitData[10],
                         splitData[11], splitData[12], Boolean.parseBoolean(splitData[13]));
                 if(debug) Log.i(TAG, tag + " " + mDataStatus.toString());
+
+                int freqIndex = Arrays.binarySearch(sFreqArray, Integer.valueOf(mDataStatus.sendFreq));
+                int stepIndex = Arrays.binarySearch(sStepArray, Integer.valueOf(mDataStatus.sendStep));
+                int lowBatteryIndex = Arrays.binarySearch(sLowBatteryArray, Integer.valueOf(mDataStatus.batteryAlertThreshold));
+                Log.i(TAG, "freqIndex = " + freqIndex);
+                Log.i(TAG, "stepIndex = " + stepIndex);
+                Log.i(TAG, "lowBatteryIndex = " + lowBatteryIndex);
+                mSettingManager.writeData(SHAREPREFERENCES_FIELD_FREQ_INDEX, String.valueOf(freqIndex));
+                mSettingManager.writeData(SHAREPREFERENCES_FIELD_STEP_INDEX, String.valueOf(stepIndex));
+                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX, String.valueOf(lowBatteryIndex));
 
                 runOnUiThread(new Runnable() {
                     @Override

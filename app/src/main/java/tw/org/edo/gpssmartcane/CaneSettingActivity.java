@@ -27,6 +27,9 @@ import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_STEP_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.URL_EDIT_PARAMETERS;
+import static tw.org.edo.gpssmartcane.Constant.sFreqArray;
+import static tw.org.edo.gpssmartcane.Constant.sLowBatteryArray;
+import static tw.org.edo.gpssmartcane.Constant.sStepArray;
 
 public class CaneSettingActivity extends AppCompatActivity {
     final private  String TAG = this.getClass().getSimpleName();
@@ -40,9 +43,9 @@ public class CaneSettingActivity extends AppCompatActivity {
     private String mParaValue;
     private String mParaIndex;
 
-    private int[] mFreqArray = {1, 5, 10, 20, 30, 60}; // minutes
-    private int[] mStepArray = {5, 10 ,15 ,20, 25, 30}; // steps
-    private int[] mLowBatteryArray = {50, 40, 30 ,20 ,10}; // percent
+    private int[] mFreqArray = sFreqArray; // minutes
+    private int[] mStepArray = sStepArray; // steps
+    private int[] mLowBatteryArray = sLowBatteryArray; // percent
 
     private SeekBar mFreqSeekBar, mStepSeekBar, mLowBatterySeekBar;
 
