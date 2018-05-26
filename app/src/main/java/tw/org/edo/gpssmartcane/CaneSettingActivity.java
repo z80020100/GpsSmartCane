@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -53,14 +54,16 @@ public class CaneSettingActivity extends AppCompatActivity {
     private TextView mFreqMin, mStepMin, mLowBatteryMin;
     private TextView mFreqMax, mStepMax, mLowBatteryMax;
 
-    private Spinner mPhoneListSpinner;
-    private String mPhoneList[] = {"0955031053", "0912345678"};
+    //private Spinner mPhoneListSpinner;
+    //private String mPhoneList[] = {};
 
-    private Spinner mMailListSpinner;
-    private String mMailList[] = {"z800201002005@gmail.com", "test1@gmail.com"};
+    //private Spinner mMailListSpinner;
+    //private String mMailList[] = {};
 
     private TextView mAddCaneTextView;
     private TextView mNotifySettingTextView;
+
+    private EditText mCaneNameEditView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,9 @@ public class CaneSettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cane_setting);
 
         mSettingManager = new SettingManager(mContext);
+
+        mCaneNameEditView = findViewById(R.id.editTextCaneName);
+        mCaneNameEditView.setText(SettingManager.sCaneName);
 
         mFreqCurrent = findViewById(R.id.textViewFrequencyValue);
         mStepCurrent = findViewById(R.id.textViewStepValue);
@@ -192,6 +198,9 @@ public class CaneSettingActivity extends AppCompatActivity {
                     params.add(new BasicNameValuePair(NAME_EDIT_PARAMETERS_USER_ID, SettingManager.sUserId));
                     params.add(new BasicNameValuePair(NAME_EDIT_PARAMETERS_CANE_UID, SettingManager.sCaneId));
                     params.add(new BasicNameValuePair(mParaNames, mParaValue));
+                    Log.i(TAG, "NAME_EDIT_PARAMETERS_USER_ID = " + SettingManager.sUserId);
+                    Log.i(TAG, "NAME_EDIT_PARAMETERS_CANE_UID = " + SettingManager.sCaneId);
+                    Log.i(TAG, mParaNames + " = " + mParaValue);
                     String sessionData[] = mSettingManager.readSessionData();
                     if(sessionData == null){
                         Log.e(TAG, "sessionData is null!");
@@ -239,6 +248,7 @@ public class CaneSettingActivity extends AppCompatActivity {
         };
 
         mAddCaneTextView = findViewById(R.id.textViewAddCane);
+        /*
         mAddCaneTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -246,7 +256,9 @@ public class CaneSettingActivity extends AppCompatActivity {
                 startActivityForResult(intent, ACTIVITY_ADD_CANE);
             }
         });
+        */
 
+        /*
         mPhoneListSpinner = findViewById(R.id.spinnerPhoneList);
         ArrayAdapter<String> phoneList = new ArrayAdapter<>(mContext,
                 android.R.layout.simple_spinner_dropdown_item,
@@ -258,6 +270,7 @@ public class CaneSettingActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item,
                 mMailList);
         mMailListSpinner.setAdapter(mailList);
+        */
     }
 
     private void setFreqCurrent(int index){
