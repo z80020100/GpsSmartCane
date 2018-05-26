@@ -77,6 +77,7 @@ public class Constant {
     public static final String COOKIE_ASP_SESSION_ID_NAME_PREFIX = "ASPSESSIONID";
 
     public static final String SHAREPREFERENCES_FILE_NAME = "data";
+    public static final String SHAREPREFERENCES_FIELD_CANE_NAME = "cane_name";
     public static final String SHAREPREFERENCES_FIELD_LOGIN_EMAIL = "email";
     public static final String SHAREPREFERENCES_FIELD_LOGIN_PASSWORD = "pwd";
     public static final String SHAREPREFERENCES_FIELD_USER_ID = "user_id";
@@ -92,5 +93,5 @@ public class Constant {
 
     public static final int[] sFreqArray = {1, 5, 10, 20, 30, 60}; // minutes
     public static final int[] sStepArray = {5, 10 ,15 ,20, 25, 30}; // steps
-    public static final int[] sLowBatteryArray = {50, 40, 30 ,20 ,10}; // percent
+    public static final int[] sLowBatteryArray = {10, 20, 30 ,40 ,50}; // percent
 }
