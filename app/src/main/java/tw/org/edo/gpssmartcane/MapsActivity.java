@@ -88,6 +88,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<DataCurrentPosition> mDataCurrentPositionList = new ArrayList<>();
     private List<DataHistoryPosition> mDataHistoryPositionList = new ArrayList<>();
     private List<MarkerOptions> mHistiryMarkerOptions = new ArrayList<>();
+    private List<Marker> mHistoryMarker = new ArrayList<>();
+    private List<Circle> mHistoryCircle = new ArrayList<>();
     private DataStatus mDataStatus = new DataStatus();
 
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
@@ -711,6 +713,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .clickable(true);
             // Get back the mutable Circle
             final Circle circle = mGoogleMap.addCircle(circleOptions);
+            mHistoryCircle.add(circle);
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(gps)
@@ -718,6 +721,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title(cane_name);
             mHistiryMarkerOptions.add(markerOptions);
             final Marker melbourne = mGoogleMap.addMarker(markerOptions);
+            mHistoryMarker.add(melbourne);
 
             mGoogleMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
                 @Override
@@ -806,6 +810,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{
             Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖現在位置", 2);
+        }
+
+        if(mHistoryMarker.size() > 0 && mStartDateTextView.getVisibility() == View.GONE){
+            for(int i = 0; i < mHistoryMarker.size(); i++){
+                mHistoryMarker.get(i).remove();
+            }
+        }
+
+        if(mHistoryCircle.size() > 0 && mStartDateTextView.getVisibility() == View.GONE){
+            for(int i = 0; i < mHistoryCircle.size(); i++){
+                mHistoryCircle.get(i).remove();
+            }
         }
     }
 
@@ -1013,7 +1029,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        drawMarkerCaneHistory("A001", position_latitude_dd, position_longitude_dd, false);
+                                        drawMarkerCaneHistory(mDataStatus.caneName, position_latitude_dd, position_longitude_dd, false);
                                     }
                                 });
                             }
