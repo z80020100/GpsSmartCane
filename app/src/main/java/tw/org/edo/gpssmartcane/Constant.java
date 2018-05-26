@@ -28,6 +28,7 @@ public class Constant {
     public static final int RESULT_BINDING_WAIT_CONFIRM_CODE_ERROR = -3;
 
     public static final int RESULT_SETTING_SUCCESS = 1;
+    public static final int RESULT_SETTING_LOGOUT = 2;
     public static final int RESULT_SETTING_FAIL = -1;
 
     public static final int RESULT_CLEAR_EMERGENCY_FAIL = -1;

@@ -61,6 +61,7 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_FAIL_NOT_SUPP
 import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_FAIL_NO_BOUND_CANE;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SEARCH_FAIL;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_SETTING_LOGOUT;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_CHECK_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_NAME;
@@ -917,6 +918,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
                 break;
+            case ACTIVITY_SETTING:
+                if(resultCode == RESULT_SETTING_LOGOUT){
+                    mGetCurrentPositionCheck = RESULT_LOGIN_FAIL;
+                    mPollingStatusCtrl = false;
+                    changeUi(false);
+                }
             default:
                 Log.i(TAG, "Back from Unknown Activity: requestCode = " + requestCode);
         }

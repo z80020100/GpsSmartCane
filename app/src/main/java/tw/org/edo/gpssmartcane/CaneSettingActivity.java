@@ -24,7 +24,10 @@ import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_FREQ;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_STEP;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_USER_ID;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SETTING_FAIL;
+import static tw.org.edo.gpssmartcane.Constant.RESULT_SETTING_LOGOUT;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_EMAIL;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_PASSWORD;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_STEP_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.URL_EDIT_PARAMETERS;
@@ -53,6 +56,7 @@ public class CaneSettingActivity extends AppCompatActivity {
     private TextView mFreqCurrent, mStepCurrent, mLowBatteryCurrent;
     private TextView mFreqMin, mStepMin, mLowBatteryMin;
     private TextView mFreqMax, mStepMax, mLowBatteryMax;
+    private TextView mLogoutTextView;
 
     //private Spinner mPhoneListSpinner;
     //private String mPhoneList[] = {};
@@ -185,6 +189,18 @@ public class CaneSettingActivity extends AppCompatActivity {
                 mParaIndex = String.valueOf(seekBar.getProgress());
                 mHttpThread = new Thread(mHttpRunnable);
                 mHttpThread.start();
+            }
+        });
+
+        mLogoutTextView = findViewById(R.id.textViewLogout);
+        mLogoutTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Click logout");
+                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_EMAIL, "");
+                mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOGIN_PASSWORD, "");
+                setResult(RESULT_SETTING_LOGOUT);
+                finish();
             }
         });
 
