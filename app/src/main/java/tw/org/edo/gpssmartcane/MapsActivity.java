@@ -63,6 +63,7 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_QUERY_STATUS_SUCCESS;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SEARCH_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RETURN_VALUE_LOGIN;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_CHECK_FAIL;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_NAME;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX;
@@ -1122,6 +1123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mSettingManager.writeData(SHAREPREFERENCES_FIELD_FREQ_INDEX, String.valueOf(freqIndex));
                 mSettingManager.writeData(SHAREPREFERENCES_FIELD_STEP_INDEX, String.valueOf(stepIndex));
                 mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX, String.valueOf(lowBatteryIndex));
+                mSettingManager.writeData(SHAREPREFERENCES_FIELD_CANE_NAME, mDataStatus.caneName);
 
                 runOnUiThread(new Runnable() {
                     @Override

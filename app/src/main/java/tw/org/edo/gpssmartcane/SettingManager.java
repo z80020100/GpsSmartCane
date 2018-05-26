@@ -7,6 +7,7 @@ import android.util.Log;
 import static android.content.Context.MODE_PRIVATE;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_CHECK_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_CHECK_OK;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_NAME;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_EMAIL;
@@ -39,6 +40,7 @@ public class SettingManager {
     public static String sFreqIndex;
     public static String sStepIndex;
     public static String sLowBatteryIndex;
+    public static String sCaneName;
 
     private static final String SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID = "session_id";
     private static final String SHAREPREFERENCES_FIELD_LOGIN_SESSION_ID_FIELD_NAME = "session_id_field_name";
@@ -62,6 +64,7 @@ public class SettingManager {
             sFreqIndex = mSettings.getString(SHAREPREFERENCES_FIELD_FREQ_INDEX, "0");
             sStepIndex = mSettings.getString(SHAREPREFERENCES_FIELD_STEP_INDEX, "0");
             sLowBatteryIndex = mSettings.getString(SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX, "0");
+            sCaneName = mSettings.getString(SHAREPREFERENCES_FIELD_CANE_NAME, "");
 
             Log.i(TAG, "[readData]Email: " + sEmaill);
             Log.i(TAG, "[readData]PWD: " + sPassword);
