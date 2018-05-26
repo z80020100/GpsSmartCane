@@ -160,6 +160,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Thread mPollingStatusThread;
     private long mPollingPeriod = 1000L;
 
+    private boolean mCaneStatusPrev = false;
+    private boolean mCaneStatusNow = false;
+
+    private Marker mCurrentIconMarker;
+    private Marker mCurrentCircleMarker;
+    private Circle mCurrentCircle;
+
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
@@ -621,21 +628,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawMarkerCaneCurrentIcon(String cane_name, double latitude_dd, double longitude_dd, boolean camera_move) {
         if (mGoogleMap != null) {
+            if(mCurrentIconMarker != null){
+                mCurrentIconMarker.remove();
+            }
             //mGoogleMap.clear();
             LatLng gps = new LatLng(latitude_dd, longitude_dd);
-            mGoogleMap.addMarker(new MarkerOptions()
+            int resourceId;
+            if(mCaneStatusNow == false){
+                resourceId = R.mipmap.icon_man;
+            }
+            else{
+                resourceId = R.mipmap.icon_man_fall;
+            }
+            mCurrentIconMarker = mGoogleMap.addMarker(new MarkerOptions()
                     .position(gps)
                     .title(cane_name)
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_man)));
+                    .icon(BitmapDescriptorFactory.fromResource(resourceId)));
             if(camera_move){
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 18));
             }
+            mCaneStatusPrev = mCaneStatusNow;
         }
     }
 
     private void drawMarkerCaneCurrentCircle(final String cane_name, double latitude_dd, double longitude_dd, boolean camera_move) {
         if (mGoogleMap != null) {
             //mGoogleMap.clear();
+            if(mCurrentCircle != null){
+                mCurrentCircle.remove();
+            }
+            if(mCurrentCircleMarker != null){
+                mCurrentCircleMarker.remove();
+            }
             final LatLng gps = new LatLng(latitude_dd, longitude_dd);
 
             CircleOptions circleOptions = new CircleOptions()
@@ -645,19 +669,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .radius(5) // In meters
                     .clickable(true);
             // Get back the mutable Circle
-            final Circle circle = mGoogleMap.addCircle(circleOptions);
+            mCurrentCircle = mGoogleMap.addCircle(circleOptions);
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(gps)
                     .alpha(0F)
                     .title(cane_name);
-            mHistiryMarkerOptions.add(markerOptions);
-            final Marker melbourne = mGoogleMap.addMarker(markerOptions);
+
+            mCurrentCircleMarker = mGoogleMap.addMarker(markerOptions);
 
             mGoogleMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
                 @Override
                 public void onCircleClick(Circle circle) {
-                    melbourne.showInfoWindow();
+                    mCurrentCircleMarker.showInfoWindow();
                 }
             });
 
@@ -770,6 +794,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else{
             mEmergencyBlink = false;
             mEmergencyImageView.setImageResource(R.mipmap.emergency_normal);
+        }
+
+        if(mGetCurrentPositionData != null){
+            if(mStartDateTextView.getVisibility() == View.GONE){
+                drawCurrent(mGetCurrentPositionData, true);
+            }
+            else{
+                drawCurrent(mGetCurrentPositionData, false);
+            }
+        }
+        else{
+            Utility.makeTextAndShow(mContext, "錯誤：無法取得拐杖現在位置", 2);
         }
     }
 
@@ -888,14 +924,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String position_n_s = splited_data[i*6+5];
                 String longitude_dmm = splited_data[i*6+6];
                 String position_e_w = splited_data[i*6+7];
-                /*
+
                 Log.i(TAG, uid);
                 Log.i(TAG, cane_name);
                 Log.i(TAG, latitude_dmm);
                 Log.i(TAG, position_n_s);
                 Log.i(TAG, longitude_dmm);
                 Log.i(TAG, position_e_w);
-                */
+
 
                 mDataCurrentPositionList.add(
                         new DataCurrentPosition(uid, cane_name, latitude_dmm,
@@ -915,6 +951,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double first_longitude_dd = Utility.longitudeDMMtoDD(first_cane.longitudeDMM, first_cane.position_E_W);
             drawMarkerCaneCurrentCircle(first_cane_name, first_latitude_dd, first_longitude_dd, false);
             drawMarkerCaneCurrentIcon(first_cane_name, first_latitude_dd, first_longitude_dd, cameraMove);
+            mDataCurrentPositionList.remove(0);
         }else{
             // Workaround: force write the uid of the first cane
             Log.i(TAG, "[drawCurrent] Workaround: force write the uid of the first cane when no GPS signal");
@@ -1113,6 +1150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         splitData[8], splitData[9], splitData[10],
                         splitData[11], splitData[12], Boolean.parseBoolean(splitData[13]));
                 if(debug) Log.i(TAG, tag + " " + mDataStatus.toString());
+                mCaneStatusNow = mDataStatus.caneFall;
 
                 int freqIndex = Arrays.binarySearch(sFreqArray, Integer.valueOf(mDataStatus.sendFreq));
                 int stepIndex = Arrays.binarySearch(sStepArray, Integer.valueOf(mDataStatus.sendStep));
