@@ -24,6 +24,7 @@ import static tw.org.edo.gpssmartcane.Constant.RESULT_BINDING_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_BINDING_OK;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_BINDING_WAIT_CONFIRM_CODE;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_BINDING_WAIT_CONFIRM_CODE_ERROR;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.URL_BINDING_CANE;
 import static tw.org.edo.gpssmartcane.Constant.URL_BINDING_CANE_CHECK;
 
@@ -162,6 +163,7 @@ public class BindingActivity extends AppCompatActivity {
                             Log.i(TAG, "[onClick-binding] mBindResult == RESULT_BINDING_OK");
                             Utility.makeTextAndShow(mContext, "綁定成功", 2);
                             setResult(mBindResult);
+                            mSettingManager.writeData(SHAREPREFERENCES_FIELD_CANE_UID, mCaneUid);
                             finish();
                         }
                         else{
