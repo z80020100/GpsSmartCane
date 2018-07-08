@@ -76,8 +76,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordEditText = findViewById(R.id.editTextPassword);
 
         // Only for develop
-        mUserNameEditText.setText("edomsn@gmail.com");
-        mPasswordEditText.setText("z");
+        //mUserNameEditText.setText("edomsn@gmail.com");
+        //mPasswordEditText.setText("z");
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override

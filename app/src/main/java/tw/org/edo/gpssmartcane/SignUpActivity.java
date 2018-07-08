@@ -60,8 +60,8 @@ public class SignUpActivity extends AppCompatActivity {
         mCaneIdEdidText = findViewById(R.id.editTextCaneId);
 
         // Only for develop
-        mUserNameEditText.setText("test@gmail.com.1");
-        mPasswordEditText.setText("z");
+        //mUserNameEditText.setText("test@gmail.com.1");
+        //mPasswordEditText.setText("z");
 
         mPhoneTextView = findViewById(R.id.textViewPhone);
         mCaneIdTextView = findViewById(R.id.textViewCaneId);

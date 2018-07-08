@@ -179,8 +179,8 @@ public class BindingActivity extends AppCompatActivity {
             }
         };
 
-        mCaneUidEditText.setText("A001");
-        mPhoneEditText.setText("0955031053");
+        //mCaneUidEditText.setText("A001");
+        //mPhoneEditText.setText("0955031053");
 
         mConfirmTextView.setVisibility(View.GONE);
         mConfirmEditText.setVisibility(View.GONE);
