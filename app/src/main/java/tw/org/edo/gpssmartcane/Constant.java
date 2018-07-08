@@ -93,6 +93,6 @@ public class Constant {
     public static final int SHAREPREFERENCES_WRITE_OK = 0;
 
     public static final int[] sFreqArray = {1, 5, 10, 20, 30, 60}; // minutes
-    public static final int[] sStepArray = {5, 10 ,15 ,20, 25, 30}; // steps
+    public static final int[] sStepArray = {1, 3, 5, 10 ,15 ,20, 25, 30}; // steps
     public static final int[] sLowBatteryArray = {10, 20, 30 ,40 ,50}; // percent
 }
