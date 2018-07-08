@@ -358,4 +358,16 @@
         app:layout_constraintStart_toEndOf="@+id/textViewNotifySetting"
         app:layout_constraintTop_toTopOf="@+id/textViewNotifySetting" />
 
+    <TextView
+        android:id="@+id/textViewVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textViewNotifySetting"
+        app:layout_constraintTop_toTopOf="@+id/textViewNotifySetting" />
+
 </android.support.constraint.ConstraintLayout>

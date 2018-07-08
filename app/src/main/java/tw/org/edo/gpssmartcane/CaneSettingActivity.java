@@ -2,6 +2,8 @@ package tw.org.edo.gpssmartcane;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -62,6 +64,7 @@ public class CaneSettingActivity extends AppCompatActivity {
     private TextView mFreqMin, mStepMin, mLowBatteryMin;
     private TextView mFreqMax, mStepMax, mLowBatteryMax;
     private TextView mLogoutTextView;
+    private TextView mVersionTextView;
 
     //private Spinner mPhoneListSpinner;
     //private String mPhoneList[] = {};
@@ -231,6 +234,9 @@ public class CaneSettingActivity extends AppCompatActivity {
             }
         });
 
+        mVersionTextView = findViewById(R.id.textViewVersion);
+        mVersionTextView.setText(getVersionName(mContext));
+
         mHttpRunnable = new Runnable(){
             @Override
             public void run() {
@@ -339,4 +345,18 @@ public class CaneSettingActivity extends AppCompatActivity {
         String nowValueString = "(" + mLowBatteryArray[index] + " %)";
         mLowBatteryCurrent.setText(nowValueString);
     }
+
+    public String getVersionName(Context context){
+        PackageManager packageManager = context.getPackageManager();
+        PackageInfo packageInfo;
+        String versionName = "";
+        try {
+            packageInfo=packageManager.getPackageInfo(context.getPackageName(),0);
+            versionName=packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionName;
+    }
+
 }
