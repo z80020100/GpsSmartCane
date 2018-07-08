@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +20,7 @@ import org.apache.http.message.BasicNameValuePair;
 import java.util.ArrayList;
 
 import static tw.org.edo.gpssmartcane.Constant.ACTIVITY_ADD_CANE;
+import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_CANE_NAME;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_CANE_UID;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_FREQ;
@@ -25,6 +28,7 @@ import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_SET_STEP;
 import static tw.org.edo.gpssmartcane.Constant.NAME_EDIT_PARAMETERS_USER_ID;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SETTING_FAIL;
 import static tw.org.edo.gpssmartcane.Constant.RESULT_SETTING_LOGOUT;
+import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_CANE_NAME;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_FREQ_INDEX;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_EMAIL;
 import static tw.org.edo.gpssmartcane.Constant.SHAREPREFERENCES_FIELD_LOGIN_PASSWORD;
@@ -46,6 +50,7 @@ public class CaneSettingActivity extends AppCompatActivity {
     private String mParaNames;
     private String mParaValue;
     private String mParaIndex;
+    private String mCaneName;
 
     private int[] mFreqArray = sFreqArray; // minutes
     private int[] mStepArray = sStepArray; // steps
@@ -75,9 +80,31 @@ public class CaneSettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cane_setting);
 
         mSettingManager = new SettingManager(mContext);
-
+        mCaneName = SettingManager.sCaneName;
         mCaneNameEditView = findViewById(R.id.editTextCaneName);
         mCaneNameEditView.setText(SettingManager.sCaneName);
+        mCaneNameEditView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String caneName = String.valueOf(charSequence);
+                Log.i(TAG, "[onTextChanged]Cane Name = " + caneName);
+                mParaNames = NAME_EDIT_PARAMETERS_CANE_NAME;
+                mParaValue = caneName;
+                mParaIndex = "0";
+                mHttpThread = new Thread(mHttpRunnable);
+                mHttpThread.start();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         mFreqCurrent = findViewById(R.id.textViewFrequencyValue);
         mStepCurrent = findViewById(R.id.textViewStepValue);
@@ -250,6 +277,9 @@ public class CaneSettingActivity extends AppCompatActivity {
                                 }
                                 else if(mParaNames == NAME_EDIT_PARAMETERS_LOW_BATTERY_ALERT){
                                     mSettingManager.writeData(SHAREPREFERENCES_FIELD_LOW_BATTERY_INDEX, mParaIndex);
+                                }
+                                else if(mParaNames == NAME_EDIT_PARAMETERS_CANE_NAME){
+                                    mSettingManager.writeData(SHAREPREFERENCES_FIELD_CANE_NAME, mParaIndex);
                                 }
                             }
 
