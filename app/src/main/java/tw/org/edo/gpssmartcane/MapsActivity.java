@@ -161,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mPollingThreadDebug = false;
     private Runnable mPollingStatusRunnable;
     private Thread mPollingStatusThread;
-    private long mPollingPeriod = 1000L;
+    private long mPollingPeriod = 1100L;
 
     private boolean mCaneStatusPrev = false;
     private boolean mCaneStatusNow = false;
@@ -941,7 +941,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String latitude_dmm = splited_data[i*6+4];
             if(latitude_dmm.equals(RESULT_LOGIN_SUCCESS_NO_GPS_SIGNAL)){
                 Log.e(TAG, "[drawCurrent] No GPS signal");
-                Utility.makeTextAndShow(mContext, "無GPS訊號", 2);
+                Utility.makeTextAndShow(mContext, "無GPS訊號", 1);
             }
             else{
                 String position_n_s = splited_data[i*6+5];

@@ -1,6 +1,7 @@
 package tw.org.edo.gpssmartcane;
 
 import android.content.Context;
+import android.os.Handler;
 import android.widget.Toast;
 
 /**
@@ -9,9 +10,16 @@ import android.widget.Toast;
 
 public class Utility {
     public static void makeTextAndShow(final Context context, final String text, final int duration) {
-        Toast toast = android.widget.Toast.makeText(context, text, duration);
-        toast.setText(text);
+        final Toast toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
         toast.show();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                toast.cancel();
+            }
+        }, duration * 1000);
     }
 
     public static double latitudeDMMtoDD(String latitude_dmm, String position_n_s){
