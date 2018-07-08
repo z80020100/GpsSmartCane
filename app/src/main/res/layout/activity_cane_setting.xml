@@ -346,7 +346,7 @@
         app:layout_constraintStart_toStartOf="@+id/textViewAddCane"
         app:layout_constraintTop_toBottomOf="@+id/textViewAddCane" />
 
-    <!-- TextView
+    <TextView
         android:id="@+id/textViewLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -356,6 +356,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toEndOf="@+id/textViewNotifySetting"
-        app:layout_constraintTop_toTopOf="@+id/textViewNotifySetting" / -->
+        app:layout_constraintTop_toTopOf="@+id/textViewNotifySetting" />
 
 </android.support.constraint.ConstraintLayout>
